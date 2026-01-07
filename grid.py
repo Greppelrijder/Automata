@@ -1,4 +1,4 @@
-from boundry_conditions import BoundryConditions;
+from boundry_conditions import BoundryConditions
 
 class Grid:
 
@@ -23,10 +23,10 @@ class Grid:
         result = []
 
         for cell in self.cells:
-            result.append(self.evolve(cell));
+            result.append(self.evolve(cell))
 
         # update happens all at once
-        self.cells = result;
+        self.cells = result
 
 
     def evolve(self, cell_number) -> int:
@@ -39,7 +39,7 @@ class Grid:
         # e.g if k consists of only 0's, the corresponding position is 0
         # the cell's new state will be equal to whatever digit is in the k'th position in the ruleset
 
-        return 0;
+        return 0
 
     def get_neighbourhood(self, cell_number):
         
