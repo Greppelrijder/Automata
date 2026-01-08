@@ -7,6 +7,8 @@ class cell:
 def run(start_overview: list, amount: int, rule:str):
     for _ in range(amount):
         new_overview = cells_overview(start_overview, rule)
+        if new_overview == start_overview:
+            return new_overview
         start_overview = new_overview
         #als we de tussenstappen willen laten zien
         #print(new_overview)
@@ -55,3 +57,4 @@ def find_neigbours_update_cell(cellnumber:int, cells, rule:str):
 print(find_neigbours_update_cell(6, [1,1,1,0,0,1,0], "00011110")) #check
 print(cells_overview([1,1,1,0,0,1,0,0,1,1], "00011110")) #check
 print(run([1,1,1,0,0,1,0,0,1,1], 5, "00011110")) #check
+
