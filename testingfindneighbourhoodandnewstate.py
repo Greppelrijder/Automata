@@ -3,9 +3,16 @@ class cell:
         self.state = cells
         pass
 
+def cells_overview(start_overview: list, rule:str):
+    new_overview = []
+    for i in range(len(start_overview)):
+        update_cell_value = find_neigbours_update_cell(i, start_overview, rule)
+        new_overview.append(update_cell_value)
+    return new_overview
+
 def find_neigbours_update_cell(cellnumber:int, cells, rule:str):
     #cells is a list with cellstates: eg [0,1,0,0,0,0,1,1,1,,0], first position is cellnumber 0
-    #rule is a list with rules eg "0001111"
+    #rule is a list with rules eg "00011110"
     #cell states must be correct
     cell_state = cells[cellnumber]
     left_nb = cells[cellnumber - 1]
@@ -30,7 +37,9 @@ def find_neigbours_update_cell(cellnumber:int, cells, rule:str):
         case "001":
             newcell_state = rule[6]
         case "000":
-            newcell_state = rule[1]
+            newcell_state = rule[7]
     return newcell_state
 
-print(find_neigbours_update_cell(6, [1,1,1,0,0,1,0], "0001111"))
+
+print(find_neigbours_update_cell(6, [1,1,1,0,0,1,0], "00011110")) #check
+print(cells_overview([1,1,1,0,0,1,0,0,1,1], "00011110")) #check
