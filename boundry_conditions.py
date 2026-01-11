@@ -1,6 +1,7 @@
 from enum import Enum
 
 class BoundryConditions(Enum):
-    Periodic = 1
-    Dirichlet = 2
+    Dirichlet0 = 0
+    Dirichlet1 = 1
+    Periodic = 2
     Neumann  = 3
