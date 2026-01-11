@@ -20,6 +20,9 @@ class Grid(ABC):
 
     def __init__(self, cells: int, states: int, neighbours: int, rules: str, boundry_conditions: BoundryConditions):
         
+        if states <= 0:
+            raise ValueError("Parameter 'states' must be at least 1")
+        
         self.amount_of_cells: int = cells
         self.amount_of_states: int = states
         self.amount_of_neighbours: int = neighbours
@@ -30,14 +33,18 @@ class Grid(ABC):
             raise InvalidRulesetError("[descriptive error message]")
 
     def is_valid_ruleset(self, states: int, neighbours: int, rules: str) -> bool:
-        # check if the given ruleset is compatible with the given amount of states and beighbours
-        # first, check if the ruleset has the correct length by comparing it against amount_of_neighbour_states
-        # then, check if the ruleset contains any invalid digits
+
+        if len(self.ruleset) != self.amount_of_neighbourhood_states():
+            return False
+        
+        possible_states = range(0, self.amount_of_states)
+        if any(char not in possible_states for char in self.ruleset):
+            return False
+        
         return True
 
     def amount_of_neighbourhood_states(self) -> int:
-        # based on the amount of neighbours per cell, and the amount of states a cell can be in, the total amount of different neighbourhoods can be calculated
-        raise NotImplemented
+        return self.amount_of_states ** self.amount_of_neighbours
         
     def convert_to_neighbourhood_code(self, neighbourhood: list[Cell]) -> str:
         return "".join(str(cell.state) for cell in neighbourhood)
