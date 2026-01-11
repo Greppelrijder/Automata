@@ -29,10 +29,10 @@ class Grid(ABC):
         self.ruleset: str = rules
         self.boundry_conditions: BoundryConditions = boundry_conditions
 
-        if not self.is_valid_ruleset(states, neighbours, rules):
+        if not self.ruleset_is_valid():
             raise InvalidRulesetError("[descriptive error message]")
 
-    def is_valid_ruleset(self, states: int, neighbours: int, rules: str) -> bool:
+    def ruleset_is_valid(self) -> bool:
 
         if len(self.ruleset) != self.amount_of_neighbourhood_states():
             return False
