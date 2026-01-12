@@ -16,16 +16,13 @@ class CA_1D(Grid):
         # assigning neighbours
         for position, cell in enumerate(self.cells):
             for dir in self.neighbour_directions:
-                if (target_index := position + dir) in range(0, cells):
-                    neighbour: Cell = self.cells[target_index]
-                else: # we're outside the grid
-                    neighbour: Cell = self.apply_boundry_rules(target_index)
+                neighbour: Cell = self.apply_boundry_rules(position + dir)
                 cell.add_to_neighbourhood(neighbour)
 
     def apply_boundry_rules(self, target_index: int) -> Cell:
 
         # check if boundry rules are unnecessary
-        if target_index in range(0, self.amount_of_cells):
+        if 0 <= target_index < self.amount_of_cells:
             return self.cells[target_index]
         
         match self.boundry_conditions:
