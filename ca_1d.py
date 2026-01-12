@@ -4,7 +4,7 @@ from cell import Cell
 
 class CA_1D(Grid):
 
-    neighbour_directions = [-1, 0, 1]
+    neighbour_directions: list[int] = [-1, 0, 1] # in order
 
     def __init__(self, cells: int, rules: str, boundry_conditions: BoundryConditions):
 
@@ -16,14 +16,13 @@ class CA_1D(Grid):
         # assigning neighbours
         for position, cell in enumerate(self.cells):
             for dir in self.neighbour_directions:
-                try:
-                    neighbour: Cell = self.cells[position + dir]
-                except IndexError: # we're outside the grid
-                    neighbour: Cell = self.apply_boundry_rules(position, dir)
+                if (target_index := position + dir) in range(0, cells):
+                    neighbour: Cell = self.cells[target_index]
+                else: # we're outside the grid
+                    neighbour: Cell = self.apply_boundry_rules(target_index)
                 cell.add_to_neighbourhood(neighbour)
 
-    def apply_boundry_rules(self, position, dir) -> Cell:
-        target_index = position + dir
+    def apply_boundry_rules(self, target_index: int) -> Cell:
 
         # check if boundry rules are unnecessary
         if target_index in range(0, self.amount_of_cells):
@@ -31,7 +30,7 @@ class CA_1D(Grid):
         
         match self.boundry_conditions:
             case BoundryConditions.Periodic:
-                return target_index % self.amount_of_cells
+                return self.cells[target_index % self.amount_of_cells]
             case BoundryConditions.Dirichlet0:
                 return Cell(0)
             case BoundryConditions.Dirichlet1:
