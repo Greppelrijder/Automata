@@ -32,6 +32,7 @@ class CA_2D(Grid):
     def assign_neighbours(self, cell: Cell, column_number: int, row_number: int) -> None:
         for dir in self.neighbour_directions:
             neighbour: Cell = self.apply_boundry_rules(column_number + dir[0], row_number + dir[1])
+            cell.add_to_neighbourhood(neighbour)
 
     def apply_boundry_rules(self, target_x: int, target_y: int) -> Cell:
 
