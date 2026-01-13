@@ -30,7 +30,12 @@ class Grid(ABC):
         self.boundry_conditions: BoundryConditions = boundry_conditions
 
         if not self.ruleset_is_valid():
-            raise InvalidRulesetError("[descriptive error message]")
+            raise InvalidRulesetError(f"Incorrect length of ruleset, length must be {self.amount_of_states * self.amount_of_neighbourhood_states()}.")
+        #WE MOETEN HIER EIGENLIJK NOG ONDERSCHEID MAKEN TUSSEN INCORRECTE LENGTE EN INCORRECTE STATE
+        #RETURN 0 IF INC. LENGTE --> ERROR HIERBOVEN (MISSCHIEN DE FUNCTIE AMOUNT_OF_NEIGHBOORHOOD_STATES NOG NUTTIGER MAKEN?)
+        #RETURN 1 IF INC. STATE --> ANDERE ERROR
+        #RETURN 2 IF CORRECT --> GEEN ERROR
+    
 
     def ruleset_is_valid(self) -> bool:
 
