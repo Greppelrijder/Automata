@@ -34,11 +34,11 @@ class Grid(ABC):
 
     def ruleset_is_valid(self) -> bool:
 
-        if len(self.ruleset) != self.amount_of_neighbourhood_states():
+        if len(self.ruleset) != self.amount_of_states * self.amount_of_neighbourhood_states():
             return False
         
         possible_states = range(0, self.amount_of_states)
-        if any(char not in possible_states for char in self.ruleset):
+        if any(int(char) not in possible_states for char in self.ruleset):
             return False
         
         return True
