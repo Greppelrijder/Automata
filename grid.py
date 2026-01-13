@@ -39,7 +39,7 @@ class Grid(ABC):
 
     def ruleset_is_valid(self) -> bool:
 
-        if len(self.ruleset) != self.amount_of_states * self.amount_of_neighbourhood_states():
+        if len(self.ruleset) != self.amount_of_neighbourhood_states():
             return False
         
         possible_states = range(0, self.amount_of_states)
@@ -49,7 +49,7 @@ class Grid(ABC):
         return True
 
     def amount_of_neighbourhood_states(self) -> int:
-        return self.amount_of_states ** self.amount_of_neighbours
+        return self.amount_of_states ** (self.amount_of_neighbours + 1)
         
     def convert_to_neighbourhood_code(self, neighbourhood: list[Cell]) -> str:
         return "".join(str(cell.state) for cell in neighbourhood)
