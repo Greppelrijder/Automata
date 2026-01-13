@@ -26,67 +26,60 @@ def find_neigbours_update_cell(celltuple:tuple, cells,  boundry_conditions, rule
     cell_state = cells[celly][cellx]
     if cell_state not in [0,1]:
         raise ValueError("No valid status for cell")
-                # #determine neigbours
-                # left_nb = cells[cellx][celly - 1]
-                # if celly < len(cells[cellx]) - 1:
-                #     right_nb = cells[cellx][celly + 1]
-                # elif celly == len(cells[cellx]) - 1:
-                #     right_nb = cells[cellx][0]
-                # if cellx > 0:
-                #     up_nb = cells[cellx - 1][celly]
-                # elif cellx == 0:
-                #     up_nb = cells[-1][celly]
-                # if cellx < len(cells) - 1:
-                #     down_nb = cells[cellx + 1][celly]
-                # elif cellx == len(cells) - 1:
-                #     down_nb = cells[0][celly]
-    #determine neigbours
-    neighbour_directions: list[tuple] = [(-1,1),(0,1),(1,1),(-1,0),(0,0),(0,1),(-1,-1),(0,-1),(1,-1)] #In order
-    neighbour_states = ""
-    
-    for i in range(len(neighbour_directions)):
-        neighbour_states = neighbour_states + str(cells[celly - neighbour_directions[i][1]][cellx + neighbour_directions[i][0]]) 
-    print(neighbour_states)
 
-    # assigning neighbours
-    for positionx, positiony, cell in enumerate(cells): #dit nog fixen
-        for dir in neighbour_directions:
-            dirx = dir[0]
-            diry = dir[1]
-            neighbour: Cell = apply_boundry_rules(positionx + dirx, positiony - diry,boundry_conditions)
-            cell.add_to_neighbourhood(neighbour)
+    #determine neigbours
+    neighbour_directions: list[tuple] = [(-1,1),(0,1),(1,1),(-1,0),(0,0),(1,0),(-1,-1),(0,-1),(1,-1)] #In order
+    neighbour_states = ""
+    for dir in neighbour_directions:
+        dirx = dir[0]
+        diry = dir[1]
+        neighbour: Cell = apply_boundry_rules(cellx + dirx, celly - diry,cells,boundry_conditions)
+        neighbour_states = neighbour_states + str(neighbour)
 
     #evolve to new state
     index: int = 511 - int(neighbour_states,2)
+    print(neighbour_states)
     new_state: int = int(ruleset[index])
-    print(new_state)
+    return new_state
 
 def apply_boundry_rules(cellx: int, celly: int, cells, boundry_conditions: str):
     # check if boundry rules are unnecessary
-    if 0 <= celly < len(cells) - 1 and 0 <= cellx < len(cells[0]) - 1:
+    if 0 <= celly <= len(cells) - 1 and 0 <= cellx <= len(cells[0]) - 1:
         return cells[celly][cellx]
     
-    # match boundry_conditions:
-    #     case "Periodic":
-    #         return cells[target_index % self.amount_of_cells]
-    #     case "Dirichlet0":
-    #         return Cell(0)
-    #     case "Dirichlet1":
-    #         return Cell(1)
-    #     case "Neumann":
-    #         return self.cells[0] if cellx < 0 else self.cells[-1]
-
-    #evolve
-    # first, we figure out what al new states should be
-    #result: list[int] = np.array([])
-    #for cell in range(len(cells) * len(cells[0])):
-
-    #np.append(result,new_state)
-    #print(result)
-
-    #pattern = f"{leftup_nb}{up_nb}{rightup_nb}{left_nb}{cell_state}{right_nb}{leftdown_nb}{down_nb}{rightdown_nb}"
+    match boundry_conditions:
+        case "Periodic":  
+            if cellx <= len(cells[0]) - 1 and celly <= len(cells) - 1:
+                return cells[celly][cellx]
+            elif cellx > len(cells[0]) - 1 and celly > len(cells) - 1:
+                return cells[0][0]
+            elif cellx > len(cells[0]) - 1:
+                return cells[celly][0]
+            elif celly > len(cells) - 1:
+                return cells[0][cellx]
+        case "Dirichlet0":
+            return Cell(0)
+        case "Dirichlet1":
+            return Cell(1)
+        case "Neumann":
+            if cellx < 0 and celly < 0:
+                return cells[0][0]
+            elif cellx < 0 and celly <= len(cells) - 1:
+                return cells[celly][0]
+            elif celly < 0 and cellx <= len(cells[0]) - 1:
+                return cells[0][cellx]
+            elif cellx < 0 and celly > len(cells) - 1:
+                return cells[-1][0]
+            elif celly < 0 and cellx > len(cells[0]) - 1:
+                return cells[0][-1]
+            elif cellx <= len(cells[0]) - 1 and celly > len(cells) - 1:
+                return cells[-1][cellx]
+            elif celly <= len(cells) - 1 and cellx > len(cells[0]) - 1:
+                return cells[celly][-1]
+            elif cellx > len(cells[0]) - 1 and celly > len(cells) - 1:
+                return cells[-1][-1]
 
 #print(find_neigbours_update_cell(6, [1,1,1,0,0,1,0], "00011110"))
 #print(cells_overview([1,1,1,0,0,1,0,0,1,1], "00011110"))
 #print(run([1,1,1,0,0,1,0,0,1,1], 5, "00011110"))
-find_neigbours_update_cell((0,1),[[1,1,0,1,0],[0,1,1,0,0],[1,1,0,0,0],[0,0,1,0,1]],"Neumann","00101101001011110100111001001011011110010101100010110100111010110101100101011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010")
+find_neigbours_update_cell((4,3),[[1,1,0,1,0],[0,1,1,0,0],[1,1,0,0,0],[0,0,1,0,1]],"Neumann","00101101001011110100111001001011011110010101100010110100111010110101100101011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010111010010111100101101001001110101101011001011110001001110100110100011011101001100101110010101010110101001110010110010010")
