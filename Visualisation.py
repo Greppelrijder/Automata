@@ -11,6 +11,12 @@ canvas.place(x = 0, y = 0, width = 800, height = 400)
 
 #functions: We implement the functions that the buttons use right here
 #instead of running these functions we can maybe immediatly call the other ones
+def oneD():
+    pass
+
+def twoD():
+    pass
+
 def startup():
     pass
 
@@ -23,6 +29,13 @@ def run_amount(run_amount):
 #We implement the buttons placement overhere
 #Maybe distinction between 1D and 2D?
 #test
+#1D
+oneD_button = tk.Button(root, text = "1D", command = lambda : oneD())
+oneD_button.place(x = 400, y = 425, width = 100, height = 50)
+
+#2D
+twoD_button = tk.Button(root, text = "2D", command = lambda : twoD())
+twoD_button.place(x = 500, y = 425, width = 100, height = 50)
 
 #startup
 startup_button = tk.Button(root, text = "Plot CA", command = lambda : startup())
