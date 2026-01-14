@@ -27,3 +27,96 @@ SCREEN HIERARCHY
             -> 2D automata simulation: configure starting state; evolve automata (manually or automatically)
         -> Saved creations [optional]: select and run previous automata
     -> settings [optional]: choose coloring etc.
+
+
+
+
+<< starting screen >>
+
+LABELS:
+    * [Cellular automata]
+
+BUTTONS:
+    * [main menu] -> to 'main menu'
+    * [settings] -> to 'settings'
+_____________________
+
+
+<< main menu >>
+
+LABELS:
+    * [Main menu]
+
+BUTTONS:
+    * [1D cellular automata] -> to '1D cellular prep'
+    * [2D cellular automata] -> to '2D cellular prep'
+    * [saved creations] -> to 'saved creations'
+    * [back] -> to 'starting screen'
+_____________________
+
+
+<< 1D automata prep >>
+
+LABELS:
+    * [Creating a brand new 1D cellular automaton]
+
+INPUT:
+    * [grid size] : slider
+    * [ruleset] : textbox; automatic warning if length is not 8
+    * [boundry_conditions] : dropdown menu (Dirichlet0, Dirichlet1, Neumann, Periodic)
+    * [creation name]: textbox; must be non-empty
+
+DISPLAY:
+    * [grid size preview] : grid with cells; adjusts to <grid size>
+    * [ruleset preview] : table; displays the resulting state of each neighbourhood according to the specified ruleset
+    * [boundry conditions preview] : icon; demonstrates how the currently selected boundry conditions work 
+
+BUTTONS:
+    * [create] -> to '1D simulator'
+    * [main menu] -> to 'main menu'
+_____________________
+
+
+<< 1D simulator >>
+
+VARIABLES:
+    * [state count] = 0
+
+LABELS:
+    * [Simulating <creation name>]
+    * [Currently at state <state count>]
+
+INPUT:
+    * [grid cells] : grid; when a cell is clicked, it should light up to indicate that it will start ALIVE, click again to cancel
+    * [animation FPS] : slider
+    * [goto state number] : textbox; should only allow non-negative integers
+
+Display:
+    * [grid] : grid - see <grid cells>
+
+BUTTONS:
+    * [next step] -> evolve CA and display result; increment <state count>; on first click this should disable INPUT <grid cells>
+    * [previous step] -> display CA previous state; decrement <state count> (does nothing if <step count> == 0)
+    * [animate] -> evolve & display CA automatically according to <animation FPS>; update <state count> accordingly; this should disable INPUT <animation FPS>
+    * [pauze animation] -> stop <animate> and re-enable INPUT <animation FPS>
+    * [goto state] -> set CA to state <goto state number> (evolve if necessary); update <state count> accordingly
+    * [reset] -> set <state count> to 0; reset CA; re-enable INPUT <grid cells>
+    * [save] -> save this creation for later access in 'saved creations' (should check if name has not already been taken)
+    * [main menu] -> to 'main menu'
+_____________________
+
+
+<< saved creations >>
+
+LABELS:
+    * [Your creations]
+
+DISPLAY:
+    * [saved creations] : list
+
+BUTTONS:
+    * [goto saved creation] -> to dedicated simulator (one button for each item in <saved creations>)
+_____________________
+
+
+# 2D should work similar to 1D
