@@ -10,3 +10,20 @@ The Grid function will be doing most of the work. We need to implement the follo
 Deriving the CA_1D and CA_2D class should be easy after we designed the Grid class properly
 
 Finally, we need to add some visual functionality to the CA_1D and CA_2D classes. We're not sure what package to use as pygame is not supported currently. However, the visual layer is independend of the inner functionality of the program, so we won't need to worry about this part until later.
+
+
+--- VISUALISATION ---
+
+* different 'screens' for selection and stuff
+* there should always be a button to go back to the main menu
+
+SCREEN HIERARCHY
+
+~ starting screen
+    -> main menu: choose different modes
+        -> 1D automata prep: choose size, boundry_rules, ruleset
+            -> 1D automata simulation: configure starting state; evolve automata (manually or automatically)
+        -> 2D automata prepr: choose size, boundry_rules, ruleset
+            -> 2D automata simulation: configure starting state; evolve automata (manually or automatically)
+        -> Saved creations [optional]: select and run previous automata
+    -> settings [optional]: choose coloring etc.
