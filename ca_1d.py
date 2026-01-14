@@ -57,3 +57,6 @@ class CA_1D(Grid):
 
         for cell, state in zip(self.cells, states):
             cell.state = state
+
+    def get_states(self) -> list[int]:
+        return [c.state for c in self.cells]

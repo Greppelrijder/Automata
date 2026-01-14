@@ -90,3 +90,6 @@ class CA_2D(Grid):
         for column, new_column_states in zip(self.cells, states):
             for cell, new_state in zip(column, new_column_states):
                 cell.state = new_state
+
+    def get_states(self) -> list[list[int]]:
+        return [[c.state for c in column] for column in self.cells]
