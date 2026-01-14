@@ -1,5 +1,5 @@
 from boundry_conditions import BoundryConditions
-from grid import Grid
+from grid import Grid, InvalidStateError
 from cell import Cell
 import math
 
@@ -80,3 +80,13 @@ class CA_2D(Grid):
         for column, new_column_values in zip(self.cells, result):
             for cell, new_value in zip(column, new_column_values):
                 cell.state = new_value
+
+    def configure_initial_state(self, states: list[list[int]]) -> None:
+
+        for column in states:
+            if not all(s in range(0, self.amount_of_states) for s in column):
+                raise InvalidStateError(f"Cannot configure initial state '{states}'; the only allowed states are: {[range(0, self.amount_of_states)]}")
+        
+        for column, new_column_states in zip(self.cells, states):
+            for cell, new_state in zip(column, new_column_states):
+                cell.state = new_state
