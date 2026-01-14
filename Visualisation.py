@@ -1,18 +1,37 @@
 import tkinter as tk
 from tkinter import ttk
 
+from ca_1d import CA_1D
+from boundry_conditions import BoundryConditions
+
 root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
 root.geometry("1000x500")
-root.resizable(0, 0)
+root.resizable(False, False)
 
 canvas = tk.Canvas(root)
 canvas.place(x = 0, y = 0, width = 800, height = 400)
 
 #functions: We implement the functions that the buttons use right here
 #instead of running these functions we can maybe immediatly call the other ones
+started_1D: bool = False
+state_label: tk.Label = tk.Label(canvas)
+test_CA: CA_1D = CA_1D(9, "00011110", BoundryConditions.Dirichlet0)
+test_CA.configure_initial_state([0, 0, 0, 0, 1, 0, 0, 0, 0])
 def oneD():
-    pass
+    
+    global started_1D
+    #this code is very ugly, just for testing
+
+    if not started_1D:
+        state_label.config(text="".join(str(char) for char in test_CA.get_states()))
+        state_label.pack()
+        started_1D = True
+    else:
+        test_CA.evolve()
+        print(test_CA.get_states())    
+        state_label.config(text="".join(str(char) for char in test_CA.get_states()))
+
 
 def twoD():
     pass
