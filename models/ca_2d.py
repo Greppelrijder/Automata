@@ -6,9 +6,9 @@ import math
 class CA_2D(Grid):
 
     neighbour_directions: list[tuple[int, int]] = [
-        (-1, 1), (0, 1), (1, 1),
-        (-1, 0), (0, 0), (1, 0),
-        (-1, -1), (0, -1), (1, -1)
+        (-1, -1), (-1, 0), (-1, 1),
+        (0, -1), (0, 0), (0, 1),
+        (1, -1), (1, 0), (1, 1)
     ]
 
     def __init__(self, cells: int, rules: str, boundry_conditions: BoundryConditions):
@@ -24,34 +24,35 @@ class CA_2D(Grid):
         for _ in range(self.side_length):
             self.cells.append([Cell() for _ in range(self.side_length)])
 
-        for column_number, column in enumerate(self.cells):
-            for row_number, cell in enumerate(column):
-                self.assign_neighbours(cell, column_number, row_number)
+        for row_number, row in enumerate(self.cells):
+            for column_number, cell in enumerate(row):
+                self.assign_neighbours(cell, row_number, column_number)
 
 
-    def assign_neighbours(self, cell: Cell, column_number: int, row_number: int) -> None:
+    def assign_neighbours(self, cell: Cell, row_number: int, column_number: int) -> None:
         for dir in self.neighbour_directions:
-            neighbour: Cell = self.apply_boundry_rules(column_number + dir[0], row_number + dir[1])
+            neighbour: Cell = self.apply_boundry_rules(row_number + dir[0], column_number + dir[1])
             cell.add_to_neighbourhood(neighbour)
 
-    def apply_boundry_rules(self, target_x: int, target_y: int) -> Cell:
+
+    def apply_boundry_rules(self, target_row: int, target_column: int) -> Cell:
 
         # check if boundry rules are unnecessary
-        if (0 <= target_x < self.side_length) and (0 <= target_y < self.side_length):
-            return self.cells[target_x][target_y]
+        if (0 <= target_row < self.side_length) and (0 <= target_column < self.side_length):
+            return self.cells[target_row][target_column]
         
         # from this point on, assume at least one of the coords is unreachable
         match self.boundry_conditions:
             case BoundryConditions.Periodic:
-                return self.cells[target_x % self.side_length][target_y % self.side_length]
+                return self.cells[target_row % self.side_length][target_column % self.side_length]
             case BoundryConditions.Dirichlet0:
                 return Cell(0)
             case BoundryConditions.Dirichlet1:
                 return Cell(1)
             case BoundryConditions.Neumann:
-                result_x: int = CA_2D.fit_in_range(target_x, 0, self.side_length)
-                result_y: int = CA_2D.fit_in_range(target_y, 0, self.side_length)
-                return self.cells[result_x][result_y]
+                result_row: int = CA_2D.fit_in_range(target_row, 0, self.side_length)
+                result_column: int = CA_2D.fit_in_range(target_column, 0, self.side_length)
+                return self.cells[result_row][result_column]
 
     @staticmethod
     def fit_in_range(value: int, lower_bound: int, upper_bound: int) -> int:
@@ -66,30 +67,30 @@ class CA_2D(Grid):
         
         # first, we figure out what al new states should be
         result: list[list[int]] = []
-        for column in self.cells:
-            new_column: list[int] = []
-            for cell in column:
+        for row in self.cells:
+            new_row: list[int] = []
+            for cell in row:
                 neighbourhood: list[Cell] = cell.get_neighbourhood()
                 neighbourhood_code = self.convert_to_neighbourhood_code(neighbourhood)
                 index: int = 511 - int(neighbourhood_code, 2) # e.g '111111111' has index 0; '000000000' has index 511 within the ruleset
                 new_state: int = int(self.ruleset[index])
-                new_column.append(new_state)
-            result.append(new_column)
+                new_row.append(new_state)
+            result.append(new_row)
 
         # finally, we update all cells with their new state
-        for column, new_column_values in zip(self.cells, result):
-            for cell, new_value in zip(column, new_column_values):
+        for row, new_row_values in zip(self.cells, result):
+            for cell, new_value in zip(row, new_row_values):
                 cell.state = new_value
 
     def configure_initial_state(self, states: list[list[int]]) -> None:
 
-        for column in states:
-            if not all(s in range(0, self.amount_of_states) for s in column):
+        for row in states:
+            if not all(s in range(0, self.amount_of_states) for s in row):
                 raise InvalidStateError(f"Cannot configure initial state '{states}'; the only allowed states are: {[range(0, self.amount_of_states)]}")
         
-        for column, new_column_states in zip(self.cells, states):
-            for cell, new_state in zip(column, new_column_states):
+        for row, new_row_states in zip(self.cells, states):
+            for cell, new_state in zip(row, new_row_states):
                 cell.state = new_state
 
     def get_states(self) -> list[list[int]]:
-        return [[c.state for c in column] for column in self.cells]
+        return [[c.state for c in row] for row in self.cells]
