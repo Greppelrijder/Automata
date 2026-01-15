@@ -31,8 +31,14 @@ def deregister(name: Screen) -> bool:
         return False
     
 def run(screen_name: Screen, root: tk.Tk, args: object) -> None:
+
     try:
         screen = screens[screen_name]
-        screen(root, args)
     except KeyError:
         raise ScreenNotFoundError(f"Cannot run screen with name '{screen_name}', because it is not registered")
+    
+    #cleanup the window first
+    for element in root.winfo_children():
+        element.destroy()
+        
+    screen(root, args)
