@@ -1,5 +1,5 @@
 import numpy as np
-from .cell import Cell
+from models.cell import Cell
 
 def run(start_overview: list, amount: int, rule:str):
     for _ in range(amount):

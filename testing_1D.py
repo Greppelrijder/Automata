@@ -1,5 +1,5 @@
-from .ca_1d import CA_1D
-from .boundry_conditions import BoundryConditions
+from models.ca_1d import CA_1D
+from models.boundry_conditions import BoundryConditions
 
 def run(initial_state: list[int], steps: int, ruleset: str, boundry_conditions: BoundryConditions):
     ca: CA_1D = CA_1D(len(initial_state), ruleset, boundry_conditions)
