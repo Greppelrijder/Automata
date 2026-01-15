@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from screen import Screen
-import screen_manager
+from screens.screen import Screen
+import screens.screen_manager as screen_manager
 
 from screens import starting_screen, main_menu, ca_1d_prep_screen, ca_1d_sim_screen, ca_2d_prep_screen, ca_2d_sim_screen
 
@@ -17,6 +17,6 @@ screen_manager.register(Screen.CA_1D_simulation, ca_1d_sim_screen.run)
 screen_manager.register(Screen.CA_2D_preparation, ca_2d_prep_screen.run)
 screen_manager.register(Screen.CA_2D_simulation, ca_2d_sim_screen.run)
 
-screen_manager.run(Screen.Starting_screen, root, None)
+screen_manager.execute(Screen.Starting_screen, root, None)
 
 root.mainloop()

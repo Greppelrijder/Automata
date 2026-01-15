@@ -1,6 +1,6 @@
 import tkinter as tk
-from screen import Screen
-import screen_manager
+from .screen import Screen
+from .screen_manager import execute
 
 
 def run(root: tk.Tk, args: object) -> None:
@@ -8,7 +8,7 @@ def run(root: tk.Tk, args: object) -> None:
     canvas.place(x = 0, y = 0, width = 800, height = 400)
 
     header: tk.Label = tk.Label(root, text="Cellular automata")
-    main_menu_button: tk.Button = tk.Button(root, text="Main menu", command= lambda : screen_manager.run(Screen.Main_menu, root, None))
+    main_menu_button: tk.Button = tk.Button(root, text="Main menu", command= lambda : execute(Screen.Main_menu, root, None))
 
     header.place(x=400, y=0)
     main_menu_button.place(x=400, y=50)
