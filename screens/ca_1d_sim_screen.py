@@ -13,7 +13,7 @@ def run(root: tk.Tk, args: object) -> None:
         ruleset = str(args[1])
         boundry_conditions = str(args[2])
         name = str(args[3])
-    except IndexError, ValueError:
+    except (IndexError, ValueError):
         raise ValueError(f"For ca_1d_sim_screen, the 'args' parameter must be of type tuple[int, str, str, str] (got {type(args)})")
 
     canvas = tk.Canvas(root)
