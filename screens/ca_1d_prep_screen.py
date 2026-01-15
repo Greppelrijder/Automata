@@ -28,7 +28,7 @@ def run(root: tk.Tk, args) -> None:
         ruleset_preset = str(args[1])
         boundry_conditions_preset = str(args[2])
         name_preset: str = str(args[3])
-    except TypeError, IndexError, ValueError: # no presets passed -> use default
+    except (TypeError, IndexError, ValueError): # no presets passed -> use default
         size_preset = "9"
         ruleset_preset = "00011110"
         boundry_conditions_preset = "Dirichlet0"

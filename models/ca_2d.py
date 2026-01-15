@@ -71,6 +71,7 @@ class CA_2D(Grid):
             for cell in column:
                 neighbourhood: list[Cell] = cell.get_neighbourhood()
                 neighbourhood_code = self.convert_to_neighbourhood_code(neighbourhood)
+                print(neighbourhood_code)
                 index: int = 511 - int(neighbourhood_code, 2) # e.g '111111111' has index 0; '000000000' has index 511 within the ruleset
                 new_state: int = int(self.ruleset[index])
                 new_column.append(new_state)
