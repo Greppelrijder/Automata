@@ -1,7 +1,7 @@
 import tkinter as tk
 
 from typing import Callable
-from screens import Screen
+from screen import Screen
 
 class ScreenNameDuplicateError(Exception):
     

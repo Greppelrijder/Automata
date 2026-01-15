@@ -1,24 +1,21 @@
 import tkinter as tk
-from tkinter import ttk
 
-from models.ca_1d import CA_1D
-from models.boundry_conditions import BoundryConditions
-
-from screens import Screen
+from screen import Screen
 import screen_manager
 
-import starting_screen
-import main_menu
+from screens import starting_screen, main_menu, ca_1d_prep_screen, ca_1d_sim_screen, ca_2d_prep_screen, ca_2d_sim_screen
 
 root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
 root.geometry("1000x500")
 root.resizable(False, False)
 
-test: CA_1D = CA_1D(10, "11111111", BoundryConditions.Dirichlet0)
-
 screen_manager.register(Screen.Starting_screen, starting_screen.run)
 screen_manager.register(Screen.Main_menu, main_menu.run)
+screen_manager.register(Screen.CA_1D_preparation, ca_1d_prep_screen.run)
+screen_manager.register(Screen.CA_1D_simulation, ca_1d_sim_screen.run)
+screen_manager.register(Screen.CA_2D_preparation, ca_2d_prep_screen.run)
+screen_manager.register(Screen.CA_2D_simulation, ca_2d_sim_screen.run)
 
 screen_manager.run(Screen.Starting_screen, root, None)
 

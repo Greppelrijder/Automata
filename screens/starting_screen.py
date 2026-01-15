@@ -1,5 +1,5 @@
 import tkinter as tk
-from screens import Screen
+from screen import Screen
 import screen_manager
 
 
