@@ -4,8 +4,8 @@ class Cell:
         self.state: int = starting_state
         self.neighbourhood: list[Cell] = []
 
-    def add_to_neighbourhood(self, neighbour: Cell) -> None:
+    def add_to_neighbourhood(self, neighbour: "Cell") -> None:
         self.neighbourhood.append(neighbour)
 
-    def get_neighbourhood(self) -> list[Cell]:
+    def get_neighbourhood(self) -> list["Cell"]:
         return self.neighbourhood
