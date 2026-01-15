@@ -17,6 +17,18 @@ Finally, we need to add some visual functionality to the CA_1D and CA_2D classes
 * different 'screens' for selection and stuff
 * there should always be a button to go back to the main menu
 
+
+EXECUTION FLOW
+* the 'Screen' enum contains the names of all screens that should exist
+* each screen has its own file containing a 'run' function that takes:
+    > a tkinter root to draw onto
+    > an 'args' parameter (of type object) that can contain necessary information to run the screen (e.g. what CA are we drawing?)
+* screen_manager keeps track of all existing screens
+ - you can register a new screen to screen_manager by specify the name (an item from the 'Screen' enum) and the function (a 'run' function from one of the screen-files)
+ - you can run an existing screen by specifying the name (an item form the 'Screen' enum) and passing the tkinter root and the args object. This is how screens should call other screens
+ - the main file is responsible for registering all screens to the screen_manager at the start of execution
+ 
+
 SCREEN HIERARCHY
 
 ~ starting screen

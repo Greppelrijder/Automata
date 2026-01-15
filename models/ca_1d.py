@@ -1,6 +1,6 @@
-from boundry_conditions import BoundryConditions
-from grid import Grid, InvalidStateError
-from cell import Cell
+from .boundry_conditions import BoundryConditions
+from .grid import Grid, InvalidStateError
+from .cell import Cell
 
 class CA_1D(Grid):
 

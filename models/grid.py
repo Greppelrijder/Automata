@@ -1,5 +1,5 @@
-from boundry_conditions import BoundryConditions
-from cell import Cell
+from .boundry_conditions import BoundryConditions
+from .cell import Cell
 from abc import ABC, abstractmethod
 from typing import Collection
 

@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ca_1d import CA_1D
-from boundry_conditions import BoundryConditions
+from models.ca_1d import CA_1D
+from models.boundry_conditions import BoundryConditions
 
 root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
