@@ -1,7 +1,7 @@
 import tkinter as tk
 
 from typing import Callable
-from screen import Screen
+from screens.screen import Screen
 
 class ScreenNameDuplicateError(Exception):
     
@@ -30,7 +30,7 @@ def deregister(name: Screen) -> bool:
     except KeyError:
         return False
     
-def run(screen_name: Screen, root: tk.Tk, args: object) -> None:
+def execute(screen_name: Screen, root: tk.Tk, args: object) -> None:
 
     try:
         screen = screens[screen_name]
