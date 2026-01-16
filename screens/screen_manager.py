@@ -15,10 +15,18 @@ class ScreenNotFoundError(Exception):
         self.message = message
         super().__init__(self.message)
 
+class RootNotFoundError(Exception):
+    
+    def __init__(self, message) -> None:
+        self.message = message
+        super().__init__(self.message)
 
-screens: dict[Screen, Callable[[tk.Tk, object], None]] = {}
 
-def register(name: Screen, screen: Callable[[tk.Tk, object], None]) -> None:
+screens: dict[Screen, Callable[[tk.Misc, object], None]] = {}
+root: tk.Misc | None = None
+
+
+def register(name: Screen, screen: Callable[[tk.Misc, object], None]) -> None:
     if name in screens.keys():
         raise ScreenNameDuplicateError(f"Cannot register screen because name '{name}' is already taken")
     screens[name] = screen
@@ -30,8 +38,10 @@ def deregister(name: Screen) -> bool:
     except KeyError:
         return False
     
-def execute(screen_name: Screen, root: tk.Tk, args: object) -> None:
+def execute(screen_name: Screen, args: object) -> None:
 
+    if root is None:
+        raise RootNotFoundError(f"Cannot execute screens before root is configured")
     try:
         screen = screens[screen_name]
     except KeyError:
