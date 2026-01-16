@@ -1,6 +1,14 @@
+from copy import deepcopy
 from .boundry_conditions import BoundryConditions
 from .grid import Grid, InvalidStateError
 from .cell import Cell
+
+class CANotInitializedError(Exception):
+    
+    def __init__(self, message) -> None:
+        self.message = message
+        super().__init__(self.message)
+
 
 class CA_1D(Grid):
 
@@ -12,6 +20,9 @@ class CA_1D(Grid):
         
         # we'll use lists for now, then transition to arrays
         self.cells: list[Cell] = [Cell() for _ in range(cells)]
+        
+        self.history: list[list[int]] = []
+        self.current_state_index: int | None = None
 
         # assigning neighbours
         for position, cell in enumerate(self.cells):
@@ -34,9 +45,27 @@ class CA_1D(Grid):
                 return Cell(1)
             case BoundryConditions.Neumann:
                 return self.cells[0] if target_index < 0 else self.cells[-1]
+    
+    def configure_initial_state(self, states: list[int]) -> None:
 
+        if not all(s in range(0, self.amount_of_states) for s in states):
+            raise InvalidStateError(f"Cannot set this CA's state to '{states}'; the only allowed cell states are: {[range(0, self.amount_of_states)]}")
+
+        for cell, state in zip(self.cells, states):
+            cell.state = state
+        
+        self.history = []
+        self.history.append(states)
+        self.current_state_index = 0
+
+    def get_states(self) -> list[int]:
+        return [c.state for c in self.cells]
+    
     def evolve(self) -> None:
 
+        if self.current_state_index == None:
+            raise CANotInitializedError("Cannot evolve CA because it has no starting state")
+        
         # first, we figure out what al new states should be
         result: list[int] = []
         for cell in self.cells:
@@ -50,13 +79,23 @@ class CA_1D(Grid):
         for cell, state in zip(self.cells, result):
             cell.state = state
 
-    def configure_initial_state(self, states: list[int]) -> None:
+        # record state
+        self.history.append(deepcopy(result))
+        self.current_state_index += 1
+    
+    def goto_state(self, index: int) -> None:
 
-        if not all(s in range(0, self.amount_of_states) for s in states):
-            raise InvalidStateError(f"Cannot configure initial state '{states}'; the only allowed states are: {[range(0, self.amount_of_states)]}")
-
-        for cell, state in zip(self.cells, states):
+        try:
+            target_state = self.history[index]
+        except IndexError:
+            raise IndexError(f"Cannot go to state {index} for this CA, because it does not exist")
+        
+        self.current_state_index = index
+        for cell, state in zip(self.cells, target_state):
             cell.state = state
-
-    def get_states(self) -> list[int]:
-        return [c.state for c in self.cells]
+        
+    def devolve(self) -> None:
+        if self.current_state_index is None or self.current_state_index == 0:
+            raise IndexError(f"Cannot devolve CA because there is no previous state")
+        else:
+            self.goto_state(self.current_state_index - 1)
