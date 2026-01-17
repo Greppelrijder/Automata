@@ -43,14 +43,18 @@ def run(root: tk.Misc, args: object) -> None:
         boundry_conditions, 
         name
         )))
-    starting_state_entry = tk.Entry(canvas)
+    
+    starting_state = tk.StringVar(value= "0" * grid_size)
+    starting_state_entry = tk.Entry(canvas, textvariable=starting_state)
+    confirm_starting_state_button = tk.Button(canvas, text="confirm", command = lambda: on_confirm_starting_state()) 
+    invalid_starting_state_warning = tk.Label(canvas, fg="red", text=f"Starting state must consist of {grid_size} characters")
+
     ca_display = tk.Label(canvas)
-    confirm_starting_state_button = tk.Button(canvas, text="confirm", command = lambda: on_confirm_starting_state())
     next_state_button = tk.Button(canvas, text="next", command = lambda: on_next_state())
     prev_state_button = tk.Button(canvas, text="previous", command = lambda: on_prev_state())
+    reset_button = tk.Button(canvas, text="reset", command = lambda: on_reset())
 
     # configuring widgets
-    starting_state_entry.insert(0, "0" * grid_size)
     next_state_button.config(state="disabled")
     prev_state_button.config(state="disabled")
 
@@ -60,21 +64,40 @@ def run(root: tk.Misc, args: object) -> None:
     ruleset_label.place(x=400, y=75)
     boundry_conditions_label.place(x=400, y=100)
     starting_state_entry.place(x=400,y=200)
-    confirm_starting_state_button.place(x=400, y=225)
-    next_state_button.place(x=400, y=250)
-    prev_state_button.place(x=450, y=250)
-    go_back_button.place(x=400, y=350)
+    confirm_starting_state_button.place(x=400, y=250)
+    next_state_button.place(x=400, y=275)
+    prev_state_button.place(x=450, y=275)
+    reset_button.place(x=400, y=375)
+    go_back_button.place(x=20, y=20)
 
+    # automatic warnings on invalid input
+    def validate_starting_state() -> bool:
+        starting_state_value = starting_state.get()
+        if len(starting_state_value) != grid_size:
+            invalid_starting_state_warning.config(text=f"Starting state must consist of {grid_size} characters")
+            invalid_starting_state_warning.place(x=400, y=225)
+            return False
+        elif not all(char in ["0", "1"] for char in starting_state_value):
+            invalid_starting_state_warning.config(text=f"Starting state must consist of only 1's & 0's")
+            invalid_starting_state_warning.place(x=400, y=225)
+            return False
+        else:
+            invalid_starting_state_warning.place_forget()
+            return True
+    starting_state.trace_add("write", callback = lambda *args: validate_starting_state())
 
     # commands
     def on_confirm_starting_state() -> None:
 
+        if not validate_starting_state():
+            return
+        
         ca.configure_initial_state([int(char) for char in starting_state_entry.get()])
         ca_display.config(text=starting_state_entry.get())
 
         entry_x, entry_y = starting_state_entry.winfo_x(), starting_state_entry.winfo_y()    
 
-        starting_state_entry.destroy()
+        starting_state_entry.place_forget()
         ca_display.place(x=entry_x, y=entry_y)
         
         confirm_starting_state_button.config(state="disabled")
@@ -83,11 +106,25 @@ def run(root: tk.Misc, args: object) -> None:
 
     def on_next_state() -> None:
         ca.evolve()
-        ca_display.config(text="".join(str(s) for s in ca.get_states()))
+        ca_display.config(text=ca.get_state_string())
 
     def on_prev_state() -> None:
         try:
             ca.devolve()
-            ca_display.config(text="".join(str(s) for s in ca.get_states()))
+            ca_display.config(text=ca.get_state_string())
         except IndexError:
             pass
+
+    def on_reset() -> None:
+        try: # set starting state to CA's starting state
+            starting_state.set(ca.get_state_string(index = 0)) 
+        except IndexError: # CA was not yet initialized
+            starting_state.set("0" * grid_size)
+
+        ca.reset()
+
+        ca_display.place_forget()
+        starting_state_entry.place(x=400,y=200)
+        confirm_starting_state_button.config(state="normal")
+        next_state_button.config(state="disabled")
+        prev_state_button.config(state="disabled")

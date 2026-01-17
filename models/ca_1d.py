@@ -66,12 +66,14 @@ class CA_1D(Grid):
         except IndexError:
             raise IndexError(f"Cannot get state with index {index}, because it does not exist")
     
+    def get_state_string(self, index: int | None = None) -> str:
+        return "".join(str(s) for s in self.get_state(index))
+
     def evolve(self) -> None:
 
-        # other cases
         if self.current_state_index == None:
             raise CANotInitializedError("Cannot evolve CA because it has no starting state")
-        if self.current_state_index < (len(self.history) - 1):
+        if self.current_state_index < (len(self.history) - 1): # next state has already been calculated
             self.goto_state(self.current_state_index + 1)
             return
         
@@ -109,3 +111,9 @@ class CA_1D(Grid):
             raise IndexError(f"Cannot devolve CA because there is no previous state")
         else:
             self.goto_state(self.current_state_index - 1)
+
+    def reset(self) -> None:
+        for cell in self.cells:
+            cell.state = 0
+        self.history = []
+        self.current_state_index = None

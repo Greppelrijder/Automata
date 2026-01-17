@@ -24,13 +24,13 @@ def oneD():
     #this code is very ugly, just for testing
 
     if not started_1D:
-        state_label.config(text="".join(str(char) for char in test_CA.get_states()))
+        state_label.config(text="".join(str(char) for char in test_CA.get_state()))
         state_label.pack()
         started_1D = True
     else:
         test_CA.evolve()
-        print(test_CA.get_states())    
-        state_label.config(text="".join(str(char) for char in test_CA.get_states()))
+        print(test_CA.get_state())    
+        state_label.config(text="".join(str(char) for char in test_CA.get_state()))
 
 
 def twoD():
