@@ -58,8 +58,13 @@ class CA_1D(Grid):
         self.history.append(states)
         self.current_state_index = 0
 
-    def get_states(self) -> list[int]:
-        return [c.state for c in self.cells]
+    def get_states(self, index: int | None = None) -> list[int]:
+        if index is None:
+            return [c.state for c in self.cells]
+        try:
+            return [s for s in self.history[index]]
+        except IndexError:
+            raise IndexError(f"Cannot get state with index {index}, because it does not exist")
     
     def evolve(self) -> None:
 
