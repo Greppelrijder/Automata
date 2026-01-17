@@ -86,6 +86,8 @@ def run(root: tk.Misc, args: object) -> None:
         ca_display.config(text="".join(str(s) for s in ca.get_states()))
 
     def on_prev_state() -> None:
-        print("test")
-        ca.devolve()
-        ca_display.config(text="".join(str(s) for s in ca.get_states()))
+        try:
+            ca.devolve()
+            ca_display.config(text="".join(str(s) for s in ca.get_states()))
+        except IndexError:
+            pass
