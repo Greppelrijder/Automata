@@ -83,11 +83,12 @@ def run(root: tk.Misc, args) -> None:
     ruleset.trace_add("write", callback = lambda *args: validate_ruleset())
     name.trace_add("write", callback= lambda *args: validate_name())
 
-    # check for valid input
+    # commands
     def on_create() -> None:
-        if validate_name() and validate_ruleset():
-            size = int(size_slider.get())
-            ruleset_value = ruleset.get()
-            boundry_conditions = BoundryConditions[boundry_condition_choice.get()]
-            name_value = name.get()
-            execute(Screen.CA_1D_simulation, (size, ruleset_value, boundry_conditions, name_value))
+        if not (validate_name() and validate_ruleset()):
+            return
+        size = int(size_slider.get())
+        ruleset_value = ruleset.get()
+        boundry_conditions = BoundryConditions[boundry_condition_choice.get()]
+        name_value = name.get()
+        execute(Screen.CA_1D_simulation, (size, ruleset_value, boundry_conditions, name_value))

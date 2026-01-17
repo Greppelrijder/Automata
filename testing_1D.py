@@ -11,7 +11,7 @@ def run(initial_state: list[int], steps: int, ruleset: str, boundry_conditions: 
         print()        
         ca.evolve()
 
-        if (new_grid_state := ca.get_states()) == last_grid_state:
+        if (new_grid_state := ca.get_state()) == last_grid_state:
             print("--- program stopped because the grid's state isn't changing anymore")
             break
         else:

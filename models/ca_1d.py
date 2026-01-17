@@ -58,7 +58,7 @@ class CA_1D(Grid):
         self.history.append(states)
         self.current_state_index = 0
 
-    def get_states(self, index: int | None = None) -> list[int]:
+    def get_state(self, index: int | None = None) -> list[int]:
         if index is None:
             return [c.state for c in self.cells]
         try:
@@ -71,7 +71,6 @@ class CA_1D(Grid):
         # other cases
         if self.current_state_index == None:
             raise CANotInitializedError("Cannot evolve CA because it has no starting state")
-        
         if self.current_state_index < (len(self.history) - 1):
             self.goto_state(self.current_state_index + 1)
             return
