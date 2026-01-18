@@ -18,14 +18,14 @@ class CA1D_PrepScreen(Screen):
 
         self.size_slider = tk.Scale(self.canvas, from_ = 1, to = 21, orient="horizontal")
 
-        self.ruleset = tk.StringVar()
+        self.ruleset = tk.StringVar(self.canvas)
         self.ruleset_entry = tk.Entry(self.canvas, textvariable=self.ruleset)
         self.invalid_ruleset_warning = tk.Label(self.canvas, fg="red", text="Ruleset must consist of 8 characters")
 
-        self.boundry_condition_choice = tk.StringVar(value=BoundryConditions.Dirichlet0.name)
+        self.boundry_condition_choice = tk.StringVar(self.canvas, value=BoundryConditions.Dirichlet0.name)
         self.boundry_conditions_dropdown = tk.OptionMenu(self.canvas, self.boundry_condition_choice, *BoundryConditions._member_names_)
 
-        self.ca_name = tk.StringVar()
+        self.ca_name = tk.StringVar(self.canvas)
         self.ca_name_entry = tk.Entry(self.canvas, textvariable=self.ca_name)
         self.invalid_name_warning = tk.Label(self.canvas, fg="red", text="Name must be non-empty")
 

@@ -21,7 +21,7 @@ class CA1D_SimScreen(Screen):
         self.boundry_conditions_label = tk.Label(self.canvas)
         self.go_back_button = tk.Button(self.canvas, text="back")
 
-        self.starting_state = tk.StringVar()
+        self.starting_state = tk.StringVar(self.canvas)
         self.starting_state_entry = tk.Entry(self.canvas, textvariable=self.starting_state)
         self.confirm_starting_state_button = tk.Button(self.canvas, text="confirm", command = self.on_confirm_starting_state) 
         self.invalid_starting_state_warning = tk.Label(self.canvas, fg="red")
@@ -32,9 +32,12 @@ class CA1D_SimScreen(Screen):
         self.prev_state_button = tk.Button(self.canvas, text="previous", command = self.on_prev_state)
         self.reset_button = tk.Button(self.canvas, text="reset", command = self.on_reset)
 
-        self.auto_evolve_button_text = tk.StringVar(value="auto")
+        self.auto_evolve_button_text = tk.StringVar(self.canvas, value="auto")
         self.auto_evolve_button = tk.Button(self.canvas, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed,
                                             state="disabled")
+        self.auto_evolve_interval = tk.StringVar()
+        self.auto_evolve_interval_entry = tk.Entry(self.canvas, textvariable=self.auto_evolve_interval)
+        self.invalid_interval_warning = tk.Label(self.canvas, fg="red", text="Interval must be a positive integer")
         self.loop_evolve_id: str = ""
 
     def run(self, args) -> None:
@@ -70,6 +73,7 @@ class CA1D_SimScreen(Screen):
         self.next_state_button.config(state="disabled")
         self.prev_state_button.config(state="disabled")
         self.auto_evolve_button.config(state="disabled")
+        self.auto_evolve_interval.set("1000")
 
         # placing widgets
         self.header.place(x=400, y=0)
@@ -81,11 +85,13 @@ class CA1D_SimScreen(Screen):
         self.next_state_button.place(x=400, y=275)
         self.prev_state_button.place(x=450, y=275)
         self.auto_evolve_button.place(x=400, y=300)
+        self.auto_evolve_interval_entry.place(x=450, y=300)
         self.reset_button.place(x=400, y=375)
         self.go_back_button.place(x=20, y=20)
 
         # automatic warnings on invalid input
         self.starting_state.trace_add("write", callback = lambda *args: self.validate_starting_state())
+        self.auto_evolve_interval.trace_add("write", callback= lambda *args: self.validate_evolve_interval())
 
 
     def validate_starting_state(self) -> bool:
@@ -102,6 +108,15 @@ class CA1D_SimScreen(Screen):
             self.invalid_starting_state_warning.place_forget()
             return True
     
+    def validate_evolve_interval(self) -> bool:
+        try:
+            interval = int(self.auto_evolve_interval.get())
+            assert interval > 0
+            self.invalid_interval_warning.place_forget()
+            return True
+        except ValueError, AssertionError:
+            self.invalid_interval_warning.place(x=450, y=325)
+            return False
 
     # commands
     def on_confirm_starting_state(self) -> None:
@@ -152,27 +167,38 @@ class CA1D_SimScreen(Screen):
         self.prev_state_button.config(state="disabled")
 
     def on_auto_evolve_pressed(self) -> None:
-                 
-        if self.auto_evolve_button_text.get() == "auto":
+
+        if self.auto_evolve_button_text.get() == "auto" and self.validate_evolve_interval():
+
             self.next_state_button.config(state="disabled")
             self.prev_state_button.config(state="disabled")
             self.reset_button.config(state="disabled")
             self.auto_evolve_button_text.set("stop")
-            self.loop_evolve()
+            self.auto_evolve_interval_entry.config(state="disabled")
+            self.loop_evolve(int(self.auto_evolve_interval.get()))
         else:
             self.next_state_button.config(state="normal")
             self.prev_state_button.config(state="normal")
             self.reset_button.config(state="normal")
+            self.auto_evolve_interval_entry.config(state="normal")
             self.auto_evolve_button_text.set("auto")
-            self.canvas.after_cancel(self.loop_evolve_id)
+            try:
+                self.canvas.after_cancel(self.loop_evolve_id)
+            except ValueError:
+                pass
 
-    def loop_evolve(self) -> None:
+    def loop_evolve(self, interval_milliseconds: int) -> None:
         self.on_next_state()
-        self.loop_evolve_id = self.canvas.after(1000, self.loop_evolve)
+        self.loop_evolve_id = self.canvas.after(interval_milliseconds, self.loop_evolve, interval_milliseconds)
 
     def cleanup(self) -> None:
+        try:
+            self.canvas.after_cancel(self.loop_evolve_id)
+        except ValueError:
+            pass
         self.confirm_starting_state_button.config(state="normal")
         self.reset_button.config(state="normal")
         self.auto_evolve_button_text.set("auto")
         self.ca_display.place_forget()
+        self.auto_evolve_interval_entry.config(state="normal")
         super().cleanup()
