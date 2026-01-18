@@ -39,8 +39,10 @@ class CA1D_PrepScreen(Screen):
 
     def cleanup(self) -> None:
         # forget input warnings
-        self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
-        self.ruleset.trace_remove("write", self.ruleset_validation_callback_id)    
+        try: self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
+        except ValueError: pass
+        try: self.ruleset.trace_remove("write", self.ruleset_validation_callback_id)    
+        except ValueError: pass
         super().cleanup()
         
     def apply_presets(self, args) -> None:
