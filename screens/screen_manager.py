@@ -1,7 +1,5 @@
-import tkinter as tk
-
-from typing import Callable
-from screens.screen import Screen
+from .screen_list import ScreenList
+from .screen import Screen
 
 class ScreenNameDuplicateError(Exception):
     
@@ -15,40 +13,28 @@ class ScreenNotFoundError(Exception):
         self.message = message
         super().__init__(self.message)
 
-class RootNotFoundError(Exception):
+
+screens: dict[ScreenList, Screen] = {}
+current_screen: None | Screen = None
+
+def register(screen_name: ScreenList, screen: Screen) -> None:
+    if screen_name in screens.keys():
+        raise ScreenNameDuplicateError(f"Cannot register screen because name '{screen_name}' is already taken")
+    else:
+        screens[screen_name] = screen
+
+def deregister(screen_name: ScreenList) -> None:
+    if screen_name in screens.keys():
+        del screens[screen_name]
+    else:
+        raise ScreenNotFoundError(f"Cannot deregister screen because '{screen_name}' was not found")
     
-    def __init__(self, message) -> None:
-        self.message = message
-        super().__init__(self.message)
-
-
-screens: dict[Screen, Callable[[tk.Misc, object], None]] = {}
-root: tk.Misc | None = None
-
-
-def register(name: Screen, screen: Callable[[tk.Misc, object], None]) -> None:
-    if name in screens.keys():
-        raise ScreenNameDuplicateError(f"Cannot register screen because name '{name}' is already taken")
-    screens[name] = screen
-
-def deregister(name: Screen) -> bool:
+def execute(screen_name: ScreenList, args: object) -> None:
     try:
-        del screens[name]
-        return True
-    except KeyError:
-        return False
+        target = screens[screen_name]
+    except IndexError:
+        raise ScreenNotFoundError(f"Cannot execute screen '{screen_name}' because it was not found")
     
-def execute(screen_name: Screen, args: object) -> None:
-
-    if root is None:
-        raise RootNotFoundError(f"Cannot execute screens before root is configured")
-    try:
-        screen = screens[screen_name]
-    except KeyError:
-        raise ScreenNotFoundError(f"Cannot run screen with name '{screen_name}', because it is not registered")
-    
-    #cleanup the window first
-    for element in root.winfo_children():
-        element.destroy()
-        
-    screen(root, args)
+    for screen in screens.values():
+        screen.cleanup()
+    target.run(args)

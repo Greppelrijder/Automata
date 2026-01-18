@@ -1,94 +1,98 @@
 import tkinter as tk
 import sys
-from .screen import Screen
+from .screen_list import ScreenList
 from .screen_manager import execute
+from .screen import Screen
 
 sys.path.append("..")
 from models.boundry_conditions import BoundryConditions
 
-
-
-def run(root: tk.Misc, args) -> None:
-
-    canvas = tk.Canvas(root)
-    canvas.place(x = 0, y = 0, width = 800, height = 400)
-
-    # creating widgets
-    header = tk.Label(canvas, text="Creating 1D CA")
-    go_back_button = tk.Button(canvas, text="back", command= lambda: execute(Screen.Main_menu, None))
+class CA1D_PrepScreen(Screen):
     
-    size_slider = tk.Scale(canvas, from_ = 1, to = 21, orient="horizontal")
+    def __init__(self, root: tk.Tk) -> None:
+        super().__init__(root)
 
-    ruleset = tk.StringVar()
-    ruleset_entry = tk.Entry(canvas, textvariable=ruleset)
-    invalid_ruleset_warning = tk.Label(canvas, fg="red", text="Ruleset must consist of 8 characters")
+        # creating widgets
+        self.header = tk.Label(self.canvas, text="Creating 1D CA")
+        self.go_back_button = tk.Button(self.canvas, text="back", command= lambda: execute(ScreenList.MainMenu, None))
 
-    boundry_condition_choice = tk.StringVar(value=BoundryConditions.Dirichlet0.name)
-    boundry_conditions_dropdown = tk.OptionMenu(canvas, boundry_condition_choice, *BoundryConditions._member_names_)
+        self.size_slider = tk.Scale(self.canvas, from_ = 1, to = 21, orient="horizontal")
 
-    name = tk.StringVar()
-    name_entry = tk.Entry(canvas, textvariable=name)
-    invalid_name_warning = tk.Label(canvas, fg="red", text="Name must be non-empty")
-    
-    create_button = tk.Button(canvas, text="Create", command = lambda: on_create())
+        self.ruleset = tk.StringVar()
+        self.ruleset_entry = tk.Entry(self.canvas, textvariable=self.ruleset)
+        self.invalid_ruleset_warning = tk.Label(self.canvas, fg="red", text="Ruleset must consist of 8 characters")
 
-    # widget presets
-    try: # use presets that were passed through args
-        size_preset = int(args[0])
-        ruleset_preset = str(args[1])
-        assert isinstance(boundry_conditions_preset := args[2], BoundryConditions)
-        name_preset: str = str(args[3])
-    except (TypeError, IndexError, ValueError, AssertionError): # no presets passed -> use default
-        size_preset = "9"
-        ruleset_preset = "00011110"
-        boundry_conditions_preset = BoundryConditions.Dirichlet0
-        name_preset = "New"  
-    size_slider.set(size_preset)
-    ruleset.set(ruleset_preset)
-    name.set(name_preset)
-    boundry_condition_choice.set(boundry_conditions_preset.name)
+        self.boundry_condition_choice = tk.StringVar(value=BoundryConditions.Dirichlet0.name)
+        self.boundry_conditions_dropdown = tk.OptionMenu(self.canvas, self.boundry_condition_choice, *BoundryConditions._member_names_)
 
-    # placing widgets
-    header.place(x=400, y=0)
-    go_back_button.place(x=400, y=50)
-    size_slider.place(x=400, y=75)
-    ruleset_entry.place(x=400, y=125)
-    boundry_conditions_dropdown.place(x=400, y=150)
-    name_entry.place(x=400, y=200)
-    create_button.place(x=400, y=225)
+        self.ca_name = tk.StringVar()
+        self.ca_name_entry = tk.Entry(self.canvas, textvariable=self.ca_name)
+        self.invalid_name_warning = tk.Label(self.canvas, fg="red", text="Name must be non-empty")
 
-    # automatic warnings on invalid input
-    def validate_name() -> bool:
-        if len(name.get()) == 0:
-            invalid_name_warning.place(x=400, y=250)
+        self.create_button = tk.Button(self.canvas, text="Create", command = self.on_create)
+
+    def run(self, args) -> None:
+        
+        # widget presets
+        try: # use presets that were passed through args
+            size_preset = int(args[0])
+            ruleset_preset = str(args[1])
+            assert isinstance(boundry_conditions_preset := args[2], BoundryConditions)
+            name_preset: str = str(args[3])
+        except (TypeError, IndexError, ValueError, AssertionError): # no presets passed -> use default
+            size_preset = "9"
+            ruleset_preset = "00011110"
+            boundry_conditions_preset = BoundryConditions.Dirichlet0
+            name_preset = "New"  
+        self.size_slider.set(size_preset)
+        self.ruleset.set(ruleset_preset)
+        self.ca_name.set(name_preset)
+        self.boundry_condition_choice.set(boundry_conditions_preset.name)
+
+        
+        # placing widgets
+        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
+        self.header.place(x=400, y=0)
+        self.go_back_button.place(x=400, y=50)
+        self.size_slider.place(x=400, y=75)
+        self.ruleset_entry.place(x=400, y=125)
+        self.boundry_conditions_dropdown.place(x=400, y=150)
+        self.ca_name_entry.place(x=400, y=200)
+        self.create_button.place(x=400, y=225)
+
+        #automatic warnings on invalid input
+        self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
+        self.ruleset.trace_add("write", callback= lambda *args: self.validate_ruleset())
+
+
+    def validate_name(self) -> bool:
+        if len(self.ca_name.get()) == 0:
+            self.invalid_name_warning.place(x=400, y=250)
             return False
         else:
-            invalid_name_warning.place_forget()
+            self.invalid_name_warning.place_forget()
             return True
         
-    def validate_ruleset() -> bool:
-        ruleset_value = ruleset.get()
+    def validate_ruleset(self) -> bool:
+        ruleset_value = self.ruleset.get()
         if len(ruleset_value) != 8:
-            invalid_ruleset_warning.config(text="Ruleset must consist of 8 characters")
-            invalid_ruleset_warning.place(x=400, y=250)
+            self.invalid_ruleset_warning.config(text="Ruleset must consist of 8 characters")
+            self.invalid_ruleset_warning.place(x=400, y=250)
             return False
         elif not all(char in ["0", "1"] for char in ruleset_value):
-            invalid_ruleset_warning.config(text="Ruleset must consist of only 1's & 0's")
-            invalid_ruleset_warning.place(x=400, y=250)
+            self.invalid_ruleset_warning.config(text="Ruleset must consist of only 1's & 0's")
+            self.invalid_ruleset_warning.place(x=400, y=250)
             return False
         else:
-            invalid_ruleset_warning.place_forget()
+            self.invalid_ruleset_warning.place_forget()
             return True
-
-    ruleset.trace_add("write", callback = lambda *args: validate_ruleset())
-    name.trace_add("write", callback= lambda *args: validate_name())
-
-    # commands
-    def on_create() -> None:
-        if not (validate_name() and validate_ruleset()):
+        
+    def on_create(self) -> None:
+        if not (self.validate_name() and self.validate_ruleset()):
             return
-        size = int(size_slider.get())
-        ruleset_value = ruleset.get()
-        boundry_conditions = BoundryConditions[boundry_condition_choice.get()]
-        name_value = name.get()
-        execute(Screen.CA_1D_simulation, (size, ruleset_value, boundry_conditions, name_value))
+        size = int(self.size_slider.get())
+        ruleset_value = self.ruleset.get()
+        boundry_conditions = BoundryConditions[self.boundry_condition_choice.get()]
+        ca_name_value = self.ca_name.get()
+        execute(ScreenList.CA1D_Simulation, (size, ruleset_value, boundry_conditions, ca_name_value))
+    

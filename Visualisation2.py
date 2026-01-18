@@ -1,23 +1,29 @@
 import tkinter as tk
 
-from screens.screen import Screen
+from screens.screen_list import ScreenList
 import screens.screen_manager as screen_manager
 
-from screens import starting_screen, main_menu, ca_1d_prep_screen, ca_1d_sim_screen, ca_2d_prep_screen, ca_2d_sim_screen
+from screens.starting_screen import StartingScreen
+from screens.main_menu import MainMenu
+from screens.ca_1d_prep_screen import CA1D_PrepScreen
+from screens.ca_1d_sim_screen import CA1D_SimScreen
 
 root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
 root.geometry("1000x500")
 root.resizable(False, False)
 
-screen_manager.root = root
-screen_manager.register(Screen.Starting_screen, starting_screen.run)
-screen_manager.register(Screen.Main_menu, main_menu.run)
-screen_manager.register(Screen.CA_1D_preparation, ca_1d_prep_screen.run)
-screen_manager.register(Screen.CA_1D_simulation, ca_1d_sim_screen.run)
-screen_manager.register(Screen.CA_2D_preparation, ca_2d_prep_screen.run)
-screen_manager.register(Screen.CA_2D_simulation, ca_2d_sim_screen.run)
+starting_screen = StartingScreen(root)
+main_menu = MainMenu(root)
+ca_1d_prep_screen = CA1D_PrepScreen(root)
+ca_1d_sim_screen = CA1D_SimScreen(root)
 
-screen_manager.execute(Screen.Starting_screen, None)
+
+screen_manager.register(ScreenList.StartingScreen, starting_screen)
+screen_manager.register(ScreenList.MainMenu, main_menu)
+screen_manager.register(ScreenList.CA1D_Preparation, ca_1d_prep_screen)
+screen_manager.register(ScreenList.CA1D_Simulation, ca_1d_sim_screen)
+
+screen_manager.execute(ScreenList.StartingScreen, None)
 
 root.mainloop()

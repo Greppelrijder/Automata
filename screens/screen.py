@@ -1,9 +1,15 @@
-from enum import Enum
+from abc import ABC, abstractmethod
+import tkinter as tk
 
-class Screen(Enum):
-    Starting_screen = 0
-    Main_menu = 1
-    CA_1D_preparation = 2
-    CA_1D_simulation = 3
-    CA_2D_preparation = 4
-    CA_2D_simulation = 5
+class Screen(ABC):
+
+    def __init__(self, root: tk.Tk):
+        self.root = root
+        self.canvas = tk.Canvas(root)
+
+    @abstractmethod
+    def run(self, args) -> None:
+        pass
+
+    def cleanup(self) -> None:
+        self.canvas.place_forget()
