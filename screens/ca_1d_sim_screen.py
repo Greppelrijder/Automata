@@ -35,6 +35,7 @@ class CA1D_SimScreen(Screen):
         self.auto_evolve_button_text = tk.StringVar(value="auto")
         self.auto_evolve_button = tk.Button(self.canvas, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed,
                                             state="disabled")
+        self.loop_evolve_id: str = ""
 
     def run(self, args) -> None:
         
@@ -151,20 +152,27 @@ class CA1D_SimScreen(Screen):
         self.prev_state_button.config(state="disabled")
 
     def on_auto_evolve_pressed(self) -> None:
-            
+                 
         if self.auto_evolve_button_text.get() == "auto":
             self.next_state_button.config(state="disabled")
             self.prev_state_button.config(state="disabled")
             self.reset_button.config(state="disabled")
             self.auto_evolve_button_text.set("stop")
+            self.loop_evolve()
         else:
             self.next_state_button.config(state="normal")
             self.prev_state_button.config(state="normal")
             self.reset_button.config(state="normal")
             self.auto_evolve_button_text.set("auto")
+            self.canvas.after_cancel(self.loop_evolve_id)
+
+    def loop_evolve(self) -> None:
+        self.on_next_state()
+        self.loop_evolve_id = self.canvas.after(1000, self.loop_evolve)
 
     def cleanup(self) -> None:
         self.confirm_starting_state_button.config(state="normal")
         self.reset_button.config(state="normal")
+        self.auto_evolve_button_text.set("auto")
         self.ca_display.place_forget()
         super().cleanup()
