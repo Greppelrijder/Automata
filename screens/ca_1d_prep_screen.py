@@ -33,7 +33,17 @@ class CA1D_PrepScreen(Screen):
 
     def run(self, args) -> None:
         
-        # widget presets
+        self.apply_presets(args)
+        self.place_widgets()
+        self.configure_input_warnings()
+
+    def cleanup(self) -> None:
+        # forget input warnings
+        self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
+        self.ruleset.trace_remove("write", self.ruleset_validation_callback_id)    
+        super().cleanup()
+        
+    def apply_presets(self, args) -> None:
         try: # use presets that were passed through args
             size_preset = int(args[0])
             ruleset_preset = str(args[1])
@@ -49,8 +59,7 @@ class CA1D_PrepScreen(Screen):
         self.ca_name.set(name_preset)
         self.boundry_condition_choice.set(boundry_conditions_preset.name)
 
-        
-        # placing widgets
+    def place_widgets(self) -> None:
         self.canvas.place(x = 0, y = 0, width = 800, height = 400)
         self.header.place(x=400, y=0)
         self.go_back_button.place(x=400, y=50)
@@ -60,11 +69,11 @@ class CA1D_PrepScreen(Screen):
         self.ca_name_entry.place(x=400, y=200)
         self.create_button.place(x=400, y=225)
 
-        #automatic warnings on invalid input
-        self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
-        self.ruleset.trace_add("write", callback= lambda *args: self.validate_ruleset())
+    def configure_input_warnings(self) -> None:
+        self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
+        self.ruleset_validation_callback_id = self.ruleset.trace_add("write", callback= lambda *args: self.validate_ruleset())
 
-
+    # input validations
     def validate_name(self) -> bool:
         if len(self.ca_name.get()) == 0:
             self.invalid_name_warning.place(x=400, y=250)
@@ -86,7 +95,8 @@ class CA1D_PrepScreen(Screen):
         else:
             self.invalid_ruleset_warning.place_forget()
             return True
-        
+    
+    # buttons
     def on_create(self) -> None:
         if not (self.validate_name() and self.validate_ruleset()):
             return
@@ -95,4 +105,3 @@ class CA1D_PrepScreen(Screen):
         boundry_conditions = BoundryConditions[self.boundry_condition_choice.get()]
         ca_name_value = self.ca_name.get()
         execute(ScreenList.CA1D_Simulation, (size, ruleset_value, boundry_conditions, ca_name_value))
-    
