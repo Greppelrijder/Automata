@@ -31,18 +31,25 @@ class CA1D_PrepScreen(Screen):
 
         self.create_button = tk.Button(self.canvas, text="Create", command = self.on_create)
 
+        # we'll store callback id's so that we can cancel them later
+        self.ruleset_validation_callback_id: str = ""
+        self.ca_name_validation_callback_id: str = ""
+
     def run(self, args) -> None:
         
+        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
         self.apply_presets(args)
         self.place_widgets()
         self.configure_input_warnings()
 
     def cleanup(self) -> None:
-        # forget input warnings
+        # forget callbacks
         try: self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
-        except ValueError: pass
+        except (ValueError, tk.TclError): pass
         try: self.ruleset.trace_remove("write", self.ruleset_validation_callback_id)    
-        except ValueError: pass
+        except (ValueError, tk.TclError): pass
+
+        self.invalid_name_warning.place_forget()
         super().cleanup()
         
     def apply_presets(self, args) -> None:
@@ -62,7 +69,6 @@ class CA1D_PrepScreen(Screen):
         self.boundry_condition_choice.set(boundry_conditions_preset.name)
 
     def place_widgets(self) -> None:
-        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
         self.header.place(x=400, y=0)
         self.go_back_button.place(x=400, y=50)
         self.size_slider.place(x=400, y=75)

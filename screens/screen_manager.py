@@ -15,7 +15,7 @@ class ScreenNotFoundError(Exception):
 
 
 screens: dict[ScreenList, Screen] = {}
-current_screen: None | Screen = None
+info: dict[str, Screen | None] = {"current": None}
 
 def register(screen_name: ScreenList, screen: Screen) -> None:
     if screen_name in screens.keys():
@@ -30,11 +30,13 @@ def deregister(screen_name: ScreenList) -> None:
         raise ScreenNotFoundError(f"Cannot deregister screen because '{screen_name}' was not found")
     
 def execute(screen_name: ScreenList, args: object) -> None:
+    global current_screen
     try:
         target = screens[screen_name]
     except IndexError:
         raise ScreenNotFoundError(f"Cannot execute screen '{screen_name}' because it was not found")
     
-    for screen in screens.values():
-        screen.cleanup()
+    if (current := info["current"]) is not None:
+        current.cleanup()
+    info["current"] = target
     target.run(args)

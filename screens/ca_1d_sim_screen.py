@@ -28,41 +28,65 @@ class CA1D_SimScreen(Screen):
 
         self.ca_display = tk.Label(self.canvas)
 
+
         self.next_state_button = tk.Button(self.canvas, text="next", command = self.on_next_state)
         self.prev_state_button = tk.Button(self.canvas, text="previous", command = self.on_prev_state)
         self.reset_button = tk.Button(self.canvas, text="reset", command = self.on_reset)
 
-        self.auto_evolve_button_text = tk.StringVar(self.canvas, value="auto")
-        self.auto_evolve_button = tk.Button(self.canvas, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed,
-                                            state="disabled")
+        self.auto_evolve_button_text = tk.StringVar(self.canvas)
+        self.auto_evolve_button = tk.Button(self.canvas, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed)
         self.auto_evolve_interval = tk.StringVar()
         self.auto_evolve_interval_entry = tk.Entry(self.canvas, textvariable=self.auto_evolve_interval)
         self.invalid_interval_warning = tk.Label(self.canvas, fg="red", text="Interval must be a positive integer")
+        
+        # we'll store callback id's so that we can cancel them later
         self.loop_evolve_id: str = ""
+        self.starting_state_validation_callback_id: str = ""
+        self.interval_validation_callback_id: str = ""
 
     def run(self, args) -> None:
         
-        # checking args
+        self.parse_args(args)
+
+        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
+        self.ca = CA_1D(self.grid_size, self.ruleset, self.boundry_conditions)
+
+        self.configure_widgets()
+        self.place_widgets()
+        self.configure_input_warnings()
+
+    def cleanup(self) -> None:
+        # forget callbacks (if any)
+        try: self.canvas.after_cancel(self.loop_evolve_id)
+        except (ValueError, tk.TclError): pass
+        try: self.starting_state.trace_remove("write", self.starting_state_validation_callback_id)
+        except (ValueError, tk.TclError): pass
+        try: self.auto_evolve_interval.trace_remove("write", self.interval_validation_callback_id)
+        except (ValueError, tk.TclError): pass
+
+        self.invalid_interval_warning.place_forget()
+        self.invalid_starting_state_warning.place_forget()
+        self.ca_display.place_forget()
+        super().cleanup()
+
+    def parse_args(self, args) -> None:
         error_message = f"For ca_1d_sim_screen, the 'args' parameter must be of type tuple[int, str, BoundryConditions, str] (got {type(args)})"
-        if not isinstance(args, tuple):
-            raise ValueError(error_message)
+        if not isinstance(args, tuple): raise ValueError(error_message)
         try:
             self.grid_size = int(args[0])
             self.ruleset = str(args[1])
             self.boundry_conditions = args[2]
             assert isinstance(self.boundry_conditions, BoundryConditions)
             self.ca_name = str(args[3])
-        except (IndexError, ValueError, AssertionError):
-            raise ValueError(error_message)
+        except (IndexError, ValueError, AssertionError): raise ValueError(error_message)
 
-        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
-        self.ca = CA_1D(self.grid_size, self.ruleset, self.boundry_conditions)
-        
-        # configuring widgets
+    def configure_widgets(self) -> None:
         self.header.config(text=f"Simulating 1D CA '{self.ca_name}'")
         self.size_label.config(text=f"Size: {self.grid_size}")
         self.ruleset_label.config(text=f"Rules: {self.ruleset}")
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}")
+        
+        
         self.go_back_button.config(command= lambda: execute(ScreenList.CA1D_Preparation, (
             self.grid_size, 
             self.ruleset, 
@@ -70,12 +94,19 @@ class CA1D_SimScreen(Screen):
             self.ca_name
             )))
         self.starting_state.set("0" * self.grid_size)
+        self.auto_evolve_interval.set("1000")
+        self.auto_evolve_button_text.set("auto")
+
         self.next_state_button.config(state="disabled")
         self.prev_state_button.config(state="disabled")
         self.auto_evolve_button.config(state="disabled")
-        self.auto_evolve_interval.set("1000")
 
-        # placing widgets
+        self.confirm_starting_state_button.config(state="normal")
+        self.reset_button.config(state="normal")
+        self.auto_evolve_interval_entry.config(state="normal")
+        
+
+    def place_widgets(self) -> None:
         self.header.place(x=400, y=0)
         self.size_label.place(x=400, y=50)
         self.ruleset_label.place(x=400, y=75)
@@ -89,10 +120,9 @@ class CA1D_SimScreen(Screen):
         self.reset_button.place(x=400, y=375)
         self.go_back_button.place(x=20, y=20)
 
-        # automatic warnings on invalid input
-        self.starting_state.trace_add("write", callback = lambda *args: self.validate_starting_state())
-        self.auto_evolve_interval.trace_add("write", callback= lambda *args: self.validate_evolve_interval())
-
+    def configure_input_warnings(self) -> None:
+        self.starting_state_validation_callback_id = self.starting_state.trace_add("write", callback = lambda *args: self.validate_starting_state())
+        self.interval_validation_callback_id = self.auto_evolve_interval.trace_add("write", callback= lambda *args: self.validate_evolve_interval())
 
     def validate_starting_state(self) -> bool:
         starting_state_value = self.starting_state.get()
@@ -150,10 +180,8 @@ class CA1D_SimScreen(Screen):
             pass
 
     def on_reset(self) -> None:
-        try: # set starting state to CA's starting state
-            self.starting_state.set(self.ca.get_state_string(index = 0)) 
-        except IndexError: # CA was not yet initialized
-            self.starting_state.set("0" * self.grid_size)
+        try: self.starting_state.set(self.ca.get_state_string(index = 0)) 
+        except IndexError: self.starting_state.set("0" * self.grid_size)
 
         self.ca.reset()
 
@@ -165,9 +193,10 @@ class CA1D_SimScreen(Screen):
         self.confirm_starting_state_button.config(state="normal")
         self.next_state_button.config(state="disabled")
         self.prev_state_button.config(state="disabled")
+        self.auto_evolve_button.config(state="disabled")
 
     def on_auto_evolve_pressed(self) -> None:
-
+        
         if self.auto_evolve_button_text.get() == "auto" and self.validate_evolve_interval():
 
             self.next_state_button.config(state="disabled")
@@ -184,21 +213,9 @@ class CA1D_SimScreen(Screen):
             self.auto_evolve_button_text.set("auto")
             try:
                 self.canvas.after_cancel(self.loop_evolve_id)
-            except ValueError:
+            except (tk.TclError, ValueError):
                 pass
 
     def loop_evolve(self, interval_milliseconds: int) -> None:
         self.on_next_state()
         self.loop_evolve_id = self.canvas.after(interval_milliseconds, self.loop_evolve, interval_milliseconds)
-
-    def cleanup(self) -> None:
-        try:
-            self.canvas.after_cancel(self.loop_evolve_id)
-        except ValueError:
-            pass
-        self.confirm_starting_state_button.config(state="normal")
-        self.reset_button.config(state="normal")
-        self.auto_evolve_button_text.set("auto")
-        self.ca_display.place_forget()
-        self.auto_evolve_interval_entry.config(state="normal")
-        super().cleanup()
