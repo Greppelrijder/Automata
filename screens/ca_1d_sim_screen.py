@@ -144,7 +144,7 @@ class CA1D_SimScreen(Screen):
             assert interval > 0
             self.invalid_interval_warning.place_forget()
             return True
-        except ValueError, AssertionError:
+        except (ValueError, AssertionError):
             self.invalid_interval_warning.place(x=450, y=325)
             return False
 
