@@ -1,7 +1,9 @@
-- amount_of_neighboorhood_states() correct maken of ergens nog gebruiken?
+- amount_of_neighboorhood_states() correct maken of ergens nog gebruiken?                                 # check
 - neighboorhood niet eens in een lijst zetten maar meteen een string?
-- correcte errors voor invalid ruleset
-- Nog ff naar de haakjes om Cell in de classdefinitie van Cell kijken?
-- Kan Neumann in 2D korter?
+- correcte errors voor invalid ruleset                                                                    # check
+- Nog ff naar de haakjes om Cell in de classdefinitie van Cell kijken?                                    # check
+- Kan Neumann in 2D korter?                                                                               # check
 - Hoe willen we de Dirichlet grenzen zien?
     - Gaan we ervan uit dat bij imput de randen al 0 of 1 zijn? Anders moeten we de code iets aanpassen.
+- De evolve functie in grid??
+
