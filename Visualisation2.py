@@ -12,6 +12,7 @@ root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
 root.geometry("1000x500")
 root.resizable(False, False)
+root.configure(bg = "#8D8A8A")
 
 starting_screen = StartingScreen(root)
 main_menu = MainMenu(root)
