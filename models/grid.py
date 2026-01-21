@@ -35,11 +35,11 @@ class Grid(ABC):
     def validate_ruleset(self) -> None:
 
         if len(self.ruleset) != self.amount_of_neighbourhood_states():
-            raise InvalidRulesetError(f"Incorrect length of ruleset, length must be {self.amount_of_states * self.amount_of_neighbourhood_states()}.")
+            raise InvalidRulesetError(f"Incorrect length of ruleset, length must be {self.amount_of_neighbourhood_states()}.")
         
         possible_states = range(0, self.amount_of_states)
         if any(int(char) not in possible_states for char in self.ruleset):
-            raise InvalidRulesetError(f"[another descriptive error message]")
+            raise InvalidRulesetError(f"Incorrect new state, the only allowed new states are {[range(0,self.amount_of_states)]}.")
 
     def amount_of_neighbourhood_states(self) -> int:
         return self.amount_of_states ** (self.amount_of_neighbours + 1)
