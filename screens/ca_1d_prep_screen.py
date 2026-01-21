@@ -104,11 +104,11 @@ class CA1D_PrepScreen(Screen):
         self.boundry_conditions_dropdown.place(relx=0.51, rely=0.38)
         self.ca_name_entry.place(relx=0.7, rely=0.4, width=200)
 
-        self.alive_cell_color_label.place(relx=0.4, rely=0.5)
-        self.alive_cell_color_button.place(relx=0.4, rely=0.6)
-        self.dead_cell_color_label.place(relx=0.4, rely=0.7)
-        self.dead_cell_color_button.place(relx=0.4, rely=0.8)
-        self.create_button.place(relx=0.5, rely=0.9)
+        self.alive_cell_color_label.place(relx=0.3, rely=0.55)
+        self.alive_cell_color_button.place(relx=0.3, rely=0.6)
+        self.dead_cell_color_label.place(relx=0.5, rely=0.55)
+        self.dead_cell_color_button.place(relx=0.5, rely=0.6)
+        self.create_button.place(relx=0.5, rely=0.7)
 
     def configure_input_warnings(self) -> None:
         self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
