@@ -23,7 +23,7 @@ class StartingScreen(Screen):
                                                      command= lambda : execute(ScreenList.MainMenu, None))
 
     def run(self, args) -> None:
-        self.frame.place(x = 0, y = 0, width = 800, height = 400)
+        self.frame.place(x = 0, y = 0)
         self.header.place(x=300, y=20)
         self.main_menu_button.place(x=400, y=200)
 
