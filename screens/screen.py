@@ -5,7 +5,7 @@ class Screen(ABC):
 
     def __init__(self, root: tk.Tk):
         self.root = root
-        self.frame = tk.Frame(root, width=1000, height=500)
+        self.frame = tk.Frame(root, width=1000, height=500, bg="#8D8A8A")
 
     @abstractmethod
     def run(self, args) -> None:

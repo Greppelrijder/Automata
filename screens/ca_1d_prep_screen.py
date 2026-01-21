@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.font as tkFont
 import tkinter.colorchooser
 import sys
 from .screen_list import ScreenList
@@ -14,30 +15,42 @@ class CA1D_PrepScreen(Screen):
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
 
-        # creating widgets
-        self.header = tk.Label(self.frame, text="Creating 1D CA")
-        self.go_back_button = tk.Button(self.frame, text="back", command= lambda: execute(ScreenList.MainMenu, None))
+        # create costum font
+        custom_font = tkFont.Font(family="Arial", size=25)
 
-        self.size_slider = tk.Scale(self.frame, from_ = 1, to = 21, orient="horizontal")
+        # creating widgets
+        self.header = tk.Label(self.frame, text="Creating 1D CA", font=custom_font, justify="center", background="#8D8A8A")
+        self.go_back_button = tk.Button(self.frame, text="back", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
+                                            command= lambda: execute(ScreenList.MainMenu, None))
+
+        self.size_slider = tk.Scale(self.frame, from_ = 1, to = 21, orient="horizontal", background="#2DE840", activebackground="#0C0D0C", 
+                                            fg="#202020", font=custom_font, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
 
         self.ruleset = tk.StringVar(self.frame)
-        self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset)
-        self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters")
+        self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset, border=5,background="#2DE840", 
+                                            fg="#202020", font=custom_font)
+        self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters", font=custom_font, justify="center", background="#8D8A8A")
 
         self.boundry_condition_choice = tk.StringVar(self.frame, value=BoundryConditions.Dirichlet0.name)
         self.boundry_conditions_dropdown = tk.OptionMenu(self.frame, self.boundry_condition_choice, *BoundryConditions._member_names_)
+        self.boundry_conditions_dropdown.config(font=custom_font, background="#2DE840", activebackground="#2DE840",
+                                            fg="#202020", highlightbackground="#8D8A8A", border=5)
 
         self.ca_name = tk.StringVar(self.frame)
-        self.ca_name_entry = tk.Entry(self.frame, textvariable=self.ca_name)
-        self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty")
-        
+        self.ca_name_entry = tk.Entry(self.frame, textvariable=self.ca_name, border=5,background="#2DE840", 
+                                            fg="#202020", font=custom_font)
+        self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty", font=custom_font, justify="center", background="#8D8A8A")
+
         self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", width=30)
         self.alive_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_alive_cell_color)
 
         self.dead_cell_color_label= tk.Label(self.frame, text="pick dead cell color", width=30)
         self.dead_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_dead_cell_color)
 
-        self.create_button = tk.Button(self.frame, text="Create", command = self.on_create)
+        self.create_button = tk.Button(self.frame, text="Create",  border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
+                                            command = self.on_create)
 
         # we'll store callback id's so that we can cancel them later
         self.ruleset_validation_callback_id: str = ""
@@ -84,17 +97,18 @@ class CA1D_PrepScreen(Screen):
         self.dead_cell_color_button.config(bg=dead_cell_color_preset)
 
     def place_widgets(self) -> None:
-        self.header.place(x=400, y=0)
-        self.go_back_button.place(x=400, y=50)
-        self.size_slider.place(x=400, y=75)
-        self.ruleset_entry.place(x=400, y=125)
-        self.boundry_conditions_dropdown.place(x=400, y=150)
-        self.ca_name_entry.place(x=400, y=200)
-        self.alive_cell_color_label.place(x=400, y=230)
-        self.alive_cell_color_button.place(x=400, y=255)
-        self.dead_cell_color_label.place(x=400, y=295)
-        self.dead_cell_color_button.place(x=400, y=320)
-        self.create_button.place(x=400, y=360)
+        self.header.place(relx=0.4, rely=0.01)
+        self.go_back_button.place(relx=0.01, rely=0.01)
+        self.size_slider.place(relx=0.1, rely=0.37)
+        self.ruleset_entry.place(relx=0.3, rely=0.4, width=200)
+        self.boundry_conditions_dropdown.place(relx=0.51, rely=0.38)
+        self.ca_name_entry.place(relx=0.7, rely=0.4, width=200)
+
+        self.alive_cell_color_label.place(relx=0.4, rely=0.5)
+        self.alive_cell_color_button.place(relx=0.4, rely=0.6)
+        self.dead_cell_color_label.place(relx=0.4, rely=0.7)
+        self.dead_cell_color_button.place(relx=0.4, rely=0.8)
+        self.create_button.place(relx=0.5, rely=0.9)
 
     def configure_input_warnings(self) -> None:
         self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
@@ -103,7 +117,7 @@ class CA1D_PrepScreen(Screen):
     # input validations
     def validate_name(self) -> bool:
         if len(self.ca_name.get()) == 0:
-            self.invalid_name_warning.place(x=400, y=250)
+            self.invalid_name_warning.place(relx=0.6, rely=0.5)
             return False
         else:
             self.invalid_name_warning.place_forget()
@@ -113,11 +127,11 @@ class CA1D_PrepScreen(Screen):
         ruleset_value = self.ruleset.get()
         if len(ruleset_value) != 8:
             self.invalid_ruleset_warning.config(text="Ruleset must consist of 8 characters")
-            self.invalid_ruleset_warning.place(x=400, y=250)
+            self.invalid_ruleset_warning.place(relx=0.05, rely=0.5)
             return False
         elif not all(char in ["0", "1"] for char in ruleset_value):
             self.invalid_ruleset_warning.config(text="Ruleset must consist of only 1's & 0's")
-            self.invalid_ruleset_warning.place(x=400, y=250)
+            self.invalid_ruleset_warning.place(relx=0.05, rely=0.5)
             return False
         else:
             self.invalid_ruleset_warning.place_forget()
