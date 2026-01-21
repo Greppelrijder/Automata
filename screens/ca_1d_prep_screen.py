@@ -13,23 +13,23 @@ class CA1D_PrepScreen(Screen):
         super().__init__(root)
 
         # creating widgets
-        self.header = tk.Label(self.canvas, text="Creating 1D CA")
-        self.go_back_button = tk.Button(self.canvas, text="back", command= lambda: execute(ScreenList.MainMenu, None))
+        self.header = tk.Label(self.frame, text="Creating 1D CA")
+        self.go_back_button = tk.Button(self.frame, text="back", command= lambda: execute(ScreenList.MainMenu, None))
 
-        self.size_slider = tk.Scale(self.canvas, from_ = 1, to = 21, orient="horizontal")
+        self.size_slider = tk.Scale(self.frame, from_ = 1, to = 21, orient="horizontal")
 
-        self.ruleset = tk.StringVar(self.canvas)
-        self.ruleset_entry = tk.Entry(self.canvas, textvariable=self.ruleset)
-        self.invalid_ruleset_warning = tk.Label(self.canvas, fg="red", text="Ruleset must consist of 8 characters")
+        self.ruleset = tk.StringVar(self.frame)
+        self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset)
+        self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters")
 
-        self.boundry_condition_choice = tk.StringVar(self.canvas, value=BoundryConditions.Dirichlet0.name)
-        self.boundry_conditions_dropdown = tk.OptionMenu(self.canvas, self.boundry_condition_choice, *BoundryConditions._member_names_)
+        self.boundry_condition_choice = tk.StringVar(self.frame, value=BoundryConditions.Dirichlet0.name)
+        self.boundry_conditions_dropdown = tk.OptionMenu(self.frame, self.boundry_condition_choice, *BoundryConditions._member_names_)
 
-        self.ca_name = tk.StringVar(self.canvas)
-        self.ca_name_entry = tk.Entry(self.canvas, textvariable=self.ca_name)
-        self.invalid_name_warning = tk.Label(self.canvas, fg="red", text="Name must be non-empty")
+        self.ca_name = tk.StringVar(self.frame)
+        self.ca_name_entry = tk.Entry(self.frame, textvariable=self.ca_name)
+        self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty")
 
-        self.create_button = tk.Button(self.canvas, text="Create", command = self.on_create)
+        self.create_button = tk.Button(self.frame, text="Create", command = self.on_create)
 
         # we'll store callback id's so that we can cancel them later
         self.ruleset_validation_callback_id: str = ""
@@ -37,7 +37,7 @@ class CA1D_PrepScreen(Screen):
 
     def run(self, args) -> None:
         
-        self.canvas.place(x = 0, y = 0, width = 800, height = 400)
+        self.frame.place(x = 0, y = 0)
         self.apply_presets(args)
         self.place_widgets()
         self.configure_input_warnings()

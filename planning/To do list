@@ -5,3 +5,5 @@
 - Kan Neumann in 2D korter?
 - Hoe willen we de Dirichlet grenzen zien?
     - Gaan we ervan uit dat bij imput de randen al 0 of 1 zijn? Anders moeten we de code iets aanpassen.
+
+- ca_1d_sim_screen: fuse ca_display & initial_state_entry

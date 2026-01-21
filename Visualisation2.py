@@ -24,6 +24,6 @@ screen_manager.register(ScreenList.MainMenu, main_menu)
 screen_manager.register(ScreenList.CA1D_Preparation, ca_1d_prep_screen)
 screen_manager.register(ScreenList.CA1D_Simulation, ca_1d_sim_screen)
 
-screen_manager.execute(ScreenList.StartingScreen, None)
+screen_manager.execute(ScreenList.CA1D_Preparation, None)
 
 root.mainloop()
