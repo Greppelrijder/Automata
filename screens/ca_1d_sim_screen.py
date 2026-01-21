@@ -1,5 +1,6 @@
 import sys
 import tkinter as tk
+import tkinter.colorchooser
 
 from .screen_list import ScreenList
 from .screen_manager import execute
@@ -9,6 +10,16 @@ sys.path.append("..")
 from models.ca_1d import CA_1D
 from models.boundry_conditions import BoundryConditions
 
+
+class CA1D_SimOptions:
+
+    def __init__(self, size: int, ruleset: str, boundry_conditions: BoundryConditions, name: str, alive_cell_color: str, dead_cell_color: str):
+        self.size = size
+        self.ruleset = ruleset
+        self.boundry_conditions = boundry_conditions
+        self.name = name
+        self.alive_cell_color = alive_cell_color
+        self.dead_cell_color = dead_cell_color
 
 class CA1D_SimScreen(Screen):
 
@@ -35,7 +46,7 @@ class CA1D_SimScreen(Screen):
         self.auto_evolve_button_text = tk.StringVar(self.frame)
         self.auto_evolve_button = tk.Button(self.frame, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed)
         self.auto_evolve_interval_slider = tk.Scale(self.frame, from_ = 100, to = 5000, resolution=100, orient="horizontal")
-        
+
         # we'll store callback id's so that we can cancel them later
         self.loop_evolve_id: str = ""
 
@@ -58,15 +69,15 @@ class CA1D_SimScreen(Screen):
         super().cleanup()
 
     def parse_args(self, args) -> None:
-        error_message = f"For ca_1d_sim_screen, the 'args' parameter must be of type tuple[int, str, BoundryConditions, str] (got {type(args)})"
-        if not isinstance(args, tuple): raise ValueError(error_message)
-        try:
-            self.grid_size = int(args[0])
-            self.ruleset = str(args[1])
-            self.boundry_conditions = args[2]
-            assert isinstance(self.boundry_conditions, BoundryConditions)
-            self.ca_name = str(args[3])
-        except (IndexError, ValueError, AssertionError): raise ValueError(error_message)
+        if not isinstance(args, CA1D_SimOptions):
+            raise ValueError(f"For ca_1d_sim_screen, the 'args' parameter must be of type CA1D_SimScreenArgs (got {type(args)})")
+        
+        self.grid_size = args.size
+        self.ruleset = args.ruleset
+        self.boundry_conditions = args.boundry_conditions
+        self.ca_name = args.name
+        self.alive_cell_color = args.alive_cell_color
+        self.dead_cell_color = args.dead_cell_color
 
     def setup_ca(self) -> None:
 
@@ -87,12 +98,14 @@ class CA1D_SimScreen(Screen):
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}")
         
         
-        self.go_back_button.config(command= lambda: execute(ScreenList.CA1D_Preparation, (
-            self.grid_size, 
-            self.ruleset, 
-            self.boundry_conditions, 
-            self.ca_name
-            )))
+        self.go_back_button.config(command= lambda: execute(ScreenList.CA1D_Preparation, CA1D_SimOptions(
+            self.grid_size,
+            self.ruleset,
+            self.boundry_conditions,
+            self.ca_name,
+            self.alive_cell_color,
+            self.dead_cell_color
+        )))
         self.auto_evolve_button_text.set("auto")
         self.auto_evolve_interval_slider.set(1000)
 
@@ -183,15 +196,16 @@ class CA1D_SimScreen(Screen):
             except (tk.TclError, ValueError):
                 pass
 
+    # helper functions
     def loop_evolve(self, interval_milliseconds: int) -> None:
         self.on_next_state()
         self.loop_evolve_id = self.frame.after(interval_milliseconds, self.loop_evolve, interval_milliseconds)
 
-    # helper functions
+    
     def draw_cell(self, index: int, state: int = 0):
         top_left = (index*self.ca_cell_width, 0)
         bottom_right = ((index+1)*self.ca_cell_width, self.ca_cell_width)
-        fill_color = "black" if state == 1 else "white"
+        fill_color = self.alive_cell_color if state == 1 else self.dead_cell_color
         self.ca_canvas.create_rectangle(top_left, bottom_right, fill=fill_color, outline="black")
 
     def draw_ca(self):

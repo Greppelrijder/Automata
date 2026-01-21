@@ -18,7 +18,7 @@ class StartingScreen(Screen):
 
 
         self.header: tk.Label = tk.Label(self.frame, text="Cellular automata", font=custom_font, padx=30, pady=50, justify="center", background="#8D8A8A")
-        self.main_menu_button: tk.Button = tk.Button(self.frame, border=5,background="#2DE840", activebackground="#178122", 
+        self.main_menu_button = tk.Button(self.frame, border=5,background="#2DE840", activebackground="#178122", 
                                                      text="Main menu",fg="#202020", activeforeground="#202020", font=custom_font, anchor="center", 
                                                      command= lambda : execute(ScreenList.MainMenu, None))
 
