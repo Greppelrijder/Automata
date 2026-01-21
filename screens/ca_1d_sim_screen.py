@@ -118,7 +118,7 @@ class CA1D_SimScreen(Screen):
         self.go_back_button.place(x=20, y=20)
 
     # commands
-    def on_ca_canvas_clicked(self, args: tk.Event[tk.Canvas]) -> None:
+    def on_ca_canvas_clicked(self, args) -> None: # : tk.Event[tk.Canvas]           HIER NOG NAAR KIJKEN
         index: int = int(args.x // self.ca_cell_width) # which cell was clicked
         self.ca_starting_state[index] = 1 - self.ca_starting_state[index] # flip cell's state
         self.draw_cell(index, self.ca_starting_state[index])
