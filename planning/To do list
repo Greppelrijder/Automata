@@ -1,16 +1,8 @@
-- amount_of_neighboorhood_states() correct maken of ergens nog gebruiken?                                 # check
 - neighboorhood niet eens in een lijst zetten maar meteen een string?
-- correcte errors voor invalid ruleset                                                                    # check
-- Nog ff naar de haakjes om Cell in de classdefinitie van Cell kijken?                                    # check
-- Kan Neumann in 2D korter?                                                                               # check
-- Hoe willen we de Dirichlet grenzen zien?                                                                # check
     - Gaan we ervan uit dat bij imput de randen al 0 of 1 zijn? Anders moeten we de code iets aanpassen.  # check; nog in verslag zetten
-- De evolve functie in grid??                                                                             # check
-- Als je bij 1D op reset klikt kan je nog de slider aanpassen. (dat is opzich niet heel erg)              # check
 - game of life ruleset providen?
-- Dit zou de 512 bit string voor game of life
-- bij dead en alive cell zijn dezelfde kleur toegestaan (Hoeft van mij niet verandert te worden, gebruikers
- fout als hij het daardoor niet kan zien                                                                  # check
-- maximale naamlengte                                                                                     # check
+- verslag
+- readme
+- commentaar netjes maken
 
 
