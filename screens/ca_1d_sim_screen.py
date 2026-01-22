@@ -1,6 +1,5 @@
 import sys
 import tkinter as tk
-import tkinter.colorchooser
 import tkinter.font as tkFont
 
 from .screen_list import ScreenList
@@ -25,7 +24,7 @@ class CA1D_SimOptions:
 class CA1D_SimScreen(Screen):
 
 
-    CA_CANVAS_WIDTH = 250
+    CA_REL_CANVAS_WIDTH = 0.1
 
 
     def __init__(self, root: tk.Tk) -> None:
@@ -44,7 +43,7 @@ class CA1D_SimScreen(Screen):
         self.prev_state_button = tk.Button(self.frame, text="previous", command = self.on_prev_state)
         self.reset_button = tk.Button(self.frame, text="reset", command = self.on_reset)
 
-        self.auto_evolve_button_text = tk.StringVar(self.frame)
+        self.auto_evolve_button_text = tk.StringVar(self.frame, value="auto")
         self.auto_evolve_button = tk.Button(self.frame, textvariable=self.auto_evolve_button_text, command = self.on_auto_evolve_pressed)
         self.auto_evolve_interval_slider = tk.Scale(self.frame, from_ = 100, to = 5000, resolution=100, orient="horizontal")
 
@@ -54,9 +53,7 @@ class CA1D_SimScreen(Screen):
     def run(self, args) -> None:
         
         self.parse_args(args)
-
         self.frame.place(x = 0, y = 0)
-
         self.setup_ca()
         self.configure_widgets()
         self.place_widgets()
@@ -83,13 +80,15 @@ class CA1D_SimScreen(Screen):
     def setup_ca(self) -> None:
 
         self.ca = CA_1D(self.grid_size, self.ruleset, self.boundry_conditions)
-
-        self.ca_cell_width = self.CA_CANVAS_WIDTH / self.grid_size
         self.ca_starting_state: list[int] = [0 for _ in range(self.grid_size)]
 
-        self.ca_canvas.place(relx=0.5, rely=0.5, anchor="center", width=self.CA_CANVAS_WIDTH, height=self.ca_cell_width)
+        ca_canvas_width: float = self.CA_REL_CANVAS_WIDTH * self.frame["width"]
+        self.ca_cell_width: float = ca_canvas_width / self.grid_size
+        self.ca_canvas.place(relx=0.5, rely=0.5, anchor="center", width=ca_canvas_width, height=self.ca_cell_width)
+        
         for i in range(self.grid_size):
             self.draw_cell(i, state=0)
+
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def configure_widgets(self) -> None:
@@ -150,7 +149,7 @@ class CA1D_SimScreen(Screen):
         self.go_back_button.place(relx=0.01, rely=0.01)
 
     # commands
-    def on_ca_canvas_clicked(self, args) -> None: # : tk.Event[tk.Canvas]           HIER NOG NAAR KIJKEN
+    def on_ca_canvas_clicked(self, args: tk.Event) -> None:
         index: int = int(args.x // self.ca_cell_width) # which cell was clicked
         self.ca_starting_state[index] = 1 - self.ca_starting_state[index] # flip cell's state
         self.draw_cell(index, self.ca_starting_state[index])
