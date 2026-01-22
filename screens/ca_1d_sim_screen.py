@@ -97,12 +97,6 @@ class CA1D_SimScreen(Screen):
         custom_font1 = tkFont.Font(family="Arial", size=25)
         custom_font2 = tkFont.Font(family="Arial", size=15)
 
-        
-        #self.header = tk.Label(self.frame, text="Creating 1D CA", font=custom_font, justify="center", background="#8D8A8A")
-        #self.go_back_button = tk.Button(self.frame, text="back", border=5,background="#2DE840", activebackground="#178122", 
-        #                                    fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
-        #                                    command= lambda: execute(ScreenList.MainMenu, None))
-
         self.header.config(text=f"Simulating 1D CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
         self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
         self.ruleset_label.config(text=f"Rules: {self.ruleset}", font=custom_font2, background="#8D8A8A")
