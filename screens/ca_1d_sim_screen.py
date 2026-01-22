@@ -1,6 +1,7 @@
 import sys
 import tkinter as tk
 import tkinter.colorchooser
+import tkinter.font as tkFont
 
 from .screen_list import ScreenList
 from .screen_manager import execute
@@ -92,13 +93,25 @@ class CA1D_SimScreen(Screen):
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def configure_widgets(self) -> None:
-        self.header.config(text=f"Simulating 1D CA '{self.ca_name}'")
-        self.size_label.config(text=f"Size: {self.grid_size}")
-        self.ruleset_label.config(text=f"Rules: {self.ruleset}")
-        self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}")
+
+        # create costum font
+        custom_font1 = tkFont.Font(family="Arial", size=25)
+        custom_font2 = tkFont.Font(family="Arial", size=15)
+
+        
+        #self.header = tk.Label(self.frame, text="Creating 1D CA", font=custom_font, justify="center", background="#8D8A8A")
+        #self.go_back_button = tk.Button(self.frame, text="back", border=5,background="#2DE840", activebackground="#178122", 
+        #                                    fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
+        #                                    command= lambda: execute(ScreenList.MainMenu, None))
+
+        self.header.config(text=f"Simulating 1D CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
+        self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
+        self.ruleset_label.config(text=f"Rules: {self.ruleset}", font=custom_font2, background="#8D8A8A")
+        self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
         
         
-        self.go_back_button.config(command= lambda: execute(ScreenList.CA1D_Preparation, CA1D_SimOptions(
+        self.go_back_button.config(font=custom_font1, border=5, background="#2DE840", activebackground="#178122", fg="#202020", activeforeground="#202020", anchor="center",
+                                    command= lambda: execute(ScreenList.CA1D_Preparation, CA1D_SimOptions(
             self.grid_size,
             self.ruleset,
             self.boundry_conditions,
@@ -109,26 +122,32 @@ class CA1D_SimScreen(Screen):
         self.auto_evolve_button_text.set("auto")
         self.auto_evolve_interval_slider.set(1000)
 
-        self.next_state_button.config(state="disabled")
-        self.prev_state_button.config(state="disabled")
-        self.auto_evolve_button.config(state="disabled")
-        self.auto_evolve_interval_slider.config(state="disabled")
+        self.next_state_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.prev_state_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.auto_evolve_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.auto_evolve_interval_slider.config(state="disabled", background="#2DE840", activebackground="#0C0D0C", 
+                                            fg="#202020", font=custom_font2, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
 
-        self.confirm_starting_state_button.config(state="normal")
-        self.reset_button.config(state="normal")
+        self.confirm_starting_state_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.reset_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
 
     def place_widgets(self) -> None:
         self.header.place(x=400, y=0)
         self.size_label.place(x=400, y=50)
         self.ruleset_label.place(x=400, y=75)
         self.boundry_conditions_label.place(x=400, y=100)
-        self.confirm_starting_state_button.place(x=400, y=250)
+        self.confirm_starting_state_button.place(x=400, y=200)
         self.next_state_button.place(x=400, y=275)
-        self.prev_state_button.place(x=450, y=275)
-        self.auto_evolve_button.place(x=400, y=300)
-        self.auto_evolve_interval_slider.place(x=450,y=300)
-        self.reset_button.place(x=400, y=375)
-        self.go_back_button.place(x=20, y=20)
+        self.prev_state_button.place(x=473, y=275)
+        self.auto_evolve_button.place(x=400, y=330)
+        self.auto_evolve_interval_slider.place(x=462,y=320)
+        self.reset_button.place(x=400, y=400)
+        self.go_back_button.place(relx=0.01, rely=0.01)
 
     # commands
     def on_ca_canvas_clicked(self, args) -> None: # : tk.Event[tk.Canvas]           HIER NOG NAAR KIJKEN

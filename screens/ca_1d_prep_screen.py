@@ -42,10 +42,10 @@ class CA1D_PrepScreen(Screen):
                                             fg="#202020", font=custom_font)
         self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty", font=custom_font, justify="center", background="#8D8A8A")
 
-        self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", width=30)
+        self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", font=custom_font, justify="left", background="#8D8A8A")
         self.alive_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_alive_cell_color)
 
-        self.dead_cell_color_label= tk.Label(self.frame, text="pick dead cell color", width=30)
+        self.dead_cell_color_label= tk.Label(self.frame, text="pick dead cell color", font=custom_font, justify="left", background="#8D8A8A")
         self.dead_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_dead_cell_color)
 
         self.create_button = tk.Button(self.frame, text="Create",  border=5,background="#2DE840", activebackground="#178122", 
@@ -99,16 +99,16 @@ class CA1D_PrepScreen(Screen):
     def place_widgets(self) -> None:
         self.header.place(relx=0.4, rely=0.01)
         self.go_back_button.place(relx=0.01, rely=0.01)
-        self.size_slider.place(relx=0.1, rely=0.37)
-        self.ruleset_entry.place(relx=0.3, rely=0.4, width=200)
-        self.boundry_conditions_dropdown.place(relx=0.51, rely=0.38)
-        self.ca_name_entry.place(relx=0.7, rely=0.4, width=200)
+        self.size_slider.place(relx=0.1, rely=0.27)
+        self.ruleset_entry.place(relx=0.3, rely=0.3, width=200)
+        self.boundry_conditions_dropdown.place(relx=0.51, rely=0.28)
+        self.ca_name_entry.place(relx=0.7, rely=0.3, width=200)
 
-        self.alive_cell_color_label.place(relx=0.3, rely=0.55)
-        self.alive_cell_color_button.place(relx=0.3, rely=0.6)
-        self.dead_cell_color_label.place(relx=0.5, rely=0.55)
-        self.dead_cell_color_button.place(relx=0.5, rely=0.6)
-        self.create_button.place(relx=0.5, rely=0.7)
+        self.alive_cell_color_label.place(relx=0.23, rely=0.5)
+        self.alive_cell_color_button.place(relx=0.3, rely=0.65)
+        self.dead_cell_color_label.place(relx=0.51, rely=0.5)
+        self.dead_cell_color_button.place(relx=0.5, rely=0.65)
+        self.create_button.place(relx=0.5, rely=0.8)
 
     def configure_input_warnings(self) -> None:
         self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
@@ -117,7 +117,7 @@ class CA1D_PrepScreen(Screen):
     # input validations
     def validate_name(self) -> bool:
         if len(self.ca_name.get()) == 0:
-            self.invalid_name_warning.place(relx=0.6, rely=0.5)
+            self.invalid_name_warning.place(relx=0.6, rely=0.4)
             return False
         else:
             self.invalid_name_warning.place_forget()
@@ -127,11 +127,11 @@ class CA1D_PrepScreen(Screen):
         ruleset_value = self.ruleset.get()
         if len(ruleset_value) != 8:
             self.invalid_ruleset_warning.config(text="Ruleset must consist of 8 characters")
-            self.invalid_ruleset_warning.place(relx=0.05, rely=0.5)
+            self.invalid_ruleset_warning.place(relx=0.05, rely=0.4)
             return False
         elif not all(char in ["0", "1"] for char in ruleset_value):
             self.invalid_ruleset_warning.config(text="Ruleset must consist of only 1's & 0's")
-            self.invalid_ruleset_warning.place(relx=0.05, rely=0.5)
+            self.invalid_ruleset_warning.place(relx=0.05, rely=0.4)
             return False
         else:
             self.invalid_ruleset_warning.place_forget()
