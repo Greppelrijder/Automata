@@ -17,6 +17,7 @@ class CA1D_PrepScreen(Screen):
 
         # create costum font
         custom_font = tkFont.Font(family="Arial", size=25)
+        custom_font2 = tkFont.Font(family="Arial", size=15)
 
         # creating widgets
         self.header = tk.Label(self.frame, text="Creating 1D CA", font=custom_font, justify="center", background="#8D8A8A")
@@ -24,28 +25,32 @@ class CA1D_PrepScreen(Screen):
                                             fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
                                             command= lambda: execute(ScreenList.MainMenu, None))
 
+        self.slider_label = tk.Label(self.frame, text="Amount of cells", font=custom_font2, justify="center", background="#8D8A8A")
         self.size_slider = tk.Scale(self.frame, from_ = 1, to = 21, orient="horizontal", background="#2DE840", activebackground="#0C0D0C", 
-                                            fg="#202020", font=custom_font, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
+                                            fg="#202020", font=custom_font2, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
 
+        self.ruleset_label = tk.Label(self.frame, text="Enter ruleset", font=custom_font2, justify="center", background="#8D8A8A")
         self.ruleset = tk.StringVar(self.frame)
         self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset, border=5,background="#2DE840", 
-                                            fg="#202020", font=custom_font)
+                                            fg="#202020", font=custom_font2)
         self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters", font=custom_font, justify="center", background="#8D8A8A")
 
+        self.boundry_condition_choice_label = tk.Label(self.frame, text="Choose boundry conditions", font=custom_font2, justify="center", background="#8D8A8A")
         self.boundry_condition_choice = tk.StringVar(self.frame, value=BoundryConditions.Dirichlet0.name)
         self.boundry_conditions_dropdown = tk.OptionMenu(self.frame, self.boundry_condition_choice, *BoundryConditions._member_names_)
-        self.boundry_conditions_dropdown.config(font=custom_font, background="#2DE840", activebackground="#2DE840",
+        self.boundry_conditions_dropdown.config(font=custom_font2, background="#2DE840", activebackground="#2DE840",
                                             fg="#202020", highlightbackground="#8D8A8A", border=5)
 
+        self.ca_name_label = tk.Label(self.frame, text="Enter name", font=custom_font2, justify="center", background="#8D8A8A")
         self.ca_name = tk.StringVar(self.frame)
         self.ca_name_entry = tk.Entry(self.frame, textvariable=self.ca_name, border=5,background="#2DE840", 
-                                            fg="#202020", font=custom_font)
+                                            fg="#202020", font=custom_font2)
         self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty", font=custom_font, justify="center", background="#8D8A8A")
 
-        self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", font=custom_font, justify="left", background="#8D8A8A")
+        self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", font=custom_font2, justify="left", background="#8D8A8A")
         self.alive_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_alive_cell_color)
 
-        self.dead_cell_color_label= tk.Label(self.frame, text="pick dead cell color", font=custom_font, justify="left", background="#8D8A8A")
+        self.dead_cell_color_label= tk.Label(self.frame, text="pick dead cell color", font=custom_font2, justify="left", background="#8D8A8A")
         self.dead_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_dead_cell_color)
 
         self.create_button = tk.Button(self.frame, text="Create",  border=5,background="#2DE840", activebackground="#178122", 
@@ -99,15 +104,23 @@ class CA1D_PrepScreen(Screen):
     def place_widgets(self) -> None:
         self.header.place(relx=0.4, rely=0.01)
         self.go_back_button.place(relx=0.01, rely=0.01)
+
+        self.slider_label.place(relx=0.1, rely=0.2)
         self.size_slider.place(relx=0.1, rely=0.27)
-        self.ruleset_entry.place(relx=0.3, rely=0.3, width=200)
-        self.boundry_conditions_dropdown.place(relx=0.51, rely=0.28)
+
+        self.ruleset_label.place(relx=0.5, rely=0.2)
+        self.ruleset_entry.place(relx=0.5, rely=0.3, width=200)
+
+        self.boundry_condition_choice_label.place(relx=0.25, rely=0.2)
+        self.boundry_conditions_dropdown.place(relx=0.25, rely=0.28)
+
+        self.ca_name_label.place(relx=0.7, rely=0.2)
         self.ca_name_entry.place(relx=0.7, rely=0.3, width=200)
 
-        self.alive_cell_color_label.place(relx=0.23, rely=0.5)
-        self.alive_cell_color_button.place(relx=0.3, rely=0.65)
-        self.dead_cell_color_label.place(relx=0.51, rely=0.5)
-        self.dead_cell_color_button.place(relx=0.5, rely=0.65)
+        self.alive_cell_color_label.place(relx=0.3, rely=0.5)
+        self.alive_cell_color_button.place(relx=0.3, rely=0.6)
+        self.dead_cell_color_label.place(relx=0.5, rely=0.5)
+        self.dead_cell_color_button.place(relx=0.5, rely=0.6)
         self.create_button.place(relx=0.5, rely=0.8)
 
     def configure_input_warnings(self) -> None:
