@@ -12,6 +12,8 @@ from models.boundry_conditions import BoundryConditions
 
 class CA1D_PrepScreen(Screen):
     
+    MAX_NAME_LENGTH = 15
+
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
 
@@ -33,7 +35,7 @@ class CA1D_PrepScreen(Screen):
         self.ruleset = tk.StringVar(self.frame)
         self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset, border=5,background="#2DE840", 
                                             fg="#202020", font=custom_font2)
-        self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters", font=custom_font, justify="center", background="#8D8A8A")
+        self.invalid_ruleset_warning = tk.Label(self.frame, fg="red", text="Ruleset must consist of 8 characters", font=custom_font2, justify="center", background="#8D8A8A")
 
         self.boundry_condition_choice_label = tk.Label(self.frame, text="Choose boundry conditions", font=custom_font2, justify="center", background="#8D8A8A")
         self.boundry_condition_choice = tk.StringVar(self.frame, value=BoundryConditions.Dirichlet0.name)
@@ -45,7 +47,7 @@ class CA1D_PrepScreen(Screen):
         self.ca_name = tk.StringVar(self.frame)
         self.ca_name_entry = tk.Entry(self.frame, textvariable=self.ca_name, border=5,background="#2DE840", 
                                             fg="#202020", font=custom_font2)
-        self.invalid_name_warning = tk.Label(self.frame, fg="red", text="Name must be non-empty", font=custom_font, justify="center", background="#8D8A8A")
+        self.invalid_name_warning = tk.Label(self.frame, fg="red", text=f"Name must be non-empty and may not contain more than {self.MAX_NAME_LENGTH} characters", font=custom_font2, justify="center", background="#8D8A8A")
 
         self.alive_cell_color_label= tk.Label(self.frame, text="pick alive cell color", font=custom_font2, justify="left", background="#8D8A8A")
         self.alive_cell_color_button = tk.Button(self.frame, width=30, command = self.on_choose_alive_cell_color)
@@ -129,7 +131,7 @@ class CA1D_PrepScreen(Screen):
 
     # input validations
     def validate_name(self) -> bool:
-        if len(self.ca_name.get()) == 0:
+        if len(self.ca_name.get()) == 0 or len(self.ca_name.get()) > 15:
             self.invalid_name_warning.place(relx=0.6, rely=0.4)
             return False
         else:
