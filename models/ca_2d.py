@@ -1,6 +1,8 @@
+from copy import deepcopy
 from .boundry_conditions import BoundryConditions
 from .grid import Grid, InvalidStateError
 from .cell import Cell
+from .ca_1d import CANotInitializedError
 import math
 
 class CA_2D(Grid):
@@ -64,6 +66,13 @@ class CA_2D(Grid):
         return max(min(upper_bound - 1, value), lower_bound)
             
     def evolve(self) -> None:
+
+        # setup for history
+        if self.current_state_index == None:
+            raise CANotInitializedError("Cannot evolve CA because it has no starting state")
+        if self.current_state_index < (len(self.history) - 1): # next state has already been calculated
+            self.goto_state(self.current_state_index + 1)
+            return
         
         # first, we figure out what al new states should be
         result: list[list[int]] = []
@@ -72,7 +81,6 @@ class CA_2D(Grid):
             for cell in row:
                 neighbourhood: list[Cell] = cell.get_neighbourhood()
                 neighbourhood_code = self.convert_to_neighbourhood_code(neighbourhood)
-                print(neighbourhood_code) # WEGHALEN
                 index: int = 511 - int(neighbourhood_code, 2) # e.g '111111111' has index 0; '000000000' has index 511 within the ruleset
                 new_state: int = int(self.ruleset[index])
                 new_row.append(new_state)
@@ -82,6 +90,10 @@ class CA_2D(Grid):
         for row, new_row_values in zip(self.cells, result):
             for cell, new_value in zip(row, new_row_values):
                 cell.state = new_value
+
+        # record state
+        self.history.append(deepcopy(result))
+        self.current_state_index += 1
 
     def configure_initial_state(self, states: list[list[int]]) -> None:
 
@@ -93,5 +105,33 @@ class CA_2D(Grid):
             for cell, new_state in zip(row, new_row_states):
                 cell.state = new_state
 
+        self.history = []
+        self.history.append(states)
+        self.current_state_index = 0
+
     def get_states(self) -> list[list[int]]:
         return [[c.state for c in row] for row in self.cells]
+    
+    def goto_state(self, index: int) -> None:
+        try:
+            target_state = self.history[index]
+        except IndexError:
+            raise IndexError(f"Cannot go to state {index} for this CA, because it does not exist")
+        
+        self.current_state_index = index
+        for row, new_row_values in zip(self.cells, target_state):
+            for cell, state in zip(row, new_row_values):
+                cell.state = state
+        
+    def devolve(self) -> None:
+        if self.current_state_index is None or self.current_state_index == 0:
+            raise IndexError(f"Cannot devolve CA because there is no previous state")
+        else:
+            self.goto_state(self.current_state_index - 1)
+
+    def reset(self) -> None:
+        for row in self.cells:
+            for cell in row:
+                cell.state = 0
+        self.history = []
+        self.current_state_index = None

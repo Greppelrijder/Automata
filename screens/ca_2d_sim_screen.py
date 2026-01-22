@@ -160,7 +160,8 @@ class CA2D_SimScreen(Screen):
         self.next_state_button.config(state="normal")
         self.prev_state_button.config(state="normal")
         self.auto_evolve_button.config(state="normal")
-        self.auto_evolve_interval_slider.config(state="normal")  
+        self.auto_evolve_interval_slider.config(state="normal")
+        self.reset_button.config(state="normal") 
 
     def on_next_state(self) -> None:
         self.ca.evolve()
@@ -178,7 +179,7 @@ class CA2D_SimScreen(Screen):
         try: # use ca's starting state
             self.ca.goto_state(0)
             self.draw_ca()
-            self.ca_starting_state = self.ca.get_state()
+            self.ca_starting_state = self.ca.get_states()
         except IndexError: # no starting state -> default to 0's
             for i in range(self.grid_size):
                 self.draw_cell(i, state=0)
@@ -191,6 +192,7 @@ class CA2D_SimScreen(Screen):
         self.prev_state_button.config(state="disabled")
         self.auto_evolve_button.config(state="disabled")
         self.auto_evolve_interval_slider.config(state="disabled")
+        self.reset_button.config(state="disabled")
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def on_auto_evolve_pressed(self) -> None:
