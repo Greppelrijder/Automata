@@ -26,6 +26,6 @@ class MainMenu(Screen):
     def run(self, args) -> None:
         self.frame.place(x = 0, y = 0)
         self.header.place(relx=0.5, rely=0.15, anchor="center")
-        self.go_back_button.place(relx=0.02, rely=0.02, anchor="nw")
+        self.go_back_button.place(relx=0.01, rely=0.01, anchor="nw")
         self.ca_1d_button.place(relx=1/3, rely=0.55, anchor="center")
         self.ca_2d_button.place(relx=2/3, rely=0.55, anchor="center")
