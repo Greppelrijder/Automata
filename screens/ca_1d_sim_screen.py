@@ -24,7 +24,7 @@ class CA1D_SimOptions:
 class CA1D_SimScreen(Screen):
 
 
-    CA_REL_CANVAS_WIDTH = 0.1
+    CA_REL_CANVAS_WIDTH = 0.3
 
 
     def __init__(self, root: tk.Tk) -> None:
