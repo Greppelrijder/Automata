@@ -7,4 +7,4 @@
     - Gaan we ervan uit dat bij imput de randen al 0 of 1 zijn? Anders moeten we de code iets aanpassen.  # check; nog in verslag zetten
 - De evolve functie in grid??
 - Als je bij 1D op reset klikt kan je nog de slider aanpassen. (dat is opzich niet heel erg)
-
+- game of life ruleset providen?
