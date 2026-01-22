@@ -87,7 +87,7 @@ class CA1D_SimScreen(Screen):
         self.ca_cell_width = self.CA_CANVAS_WIDTH / self.grid_size
         self.ca_starting_state: list[int] = [0 for _ in range(self.grid_size)]
 
-        self.ca_canvas.place(x=400, y=150, width=self.CA_CANVAS_WIDTH, height=self.ca_cell_width)
+        self.ca_canvas.place(relx=0.5, rely=0.5, anchor="center", width=self.CA_CANVAS_WIDTH, height=self.ca_cell_width)
         for i in range(self.grid_size):
             self.draw_cell(i, state=0)
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
@@ -132,21 +132,21 @@ class CA1D_SimScreen(Screen):
                                             fg="#202020", font=custom_font2, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
 
         self.confirm_starting_state_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
-                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+                                            fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
         self.reset_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
-                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+                                            fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
 
     def place_widgets(self) -> None:
-        self.header.place(x=400, y=0)
-        self.size_label.place(x=400, y=50)
-        self.ruleset_label.place(x=400, y=75)
-        self.boundry_conditions_label.place(x=400, y=100)
-        self.confirm_starting_state_button.place(x=400, y=200)
-        self.next_state_button.place(x=400, y=275)
-        self.prev_state_button.place(x=473, y=275)
-        self.auto_evolve_button.place(x=400, y=330)
-        self.auto_evolve_interval_slider.place(x=462,y=320)
-        self.reset_button.place(x=400, y=400)
+        self.header.place(relx=0.5, rely=0.1, anchor="center")
+        self.size_label.place(relx=0.4, rely=0.15)
+        self.ruleset_label.place(relx=0.4, rely=0.2)
+        self.boundry_conditions_label.place(relx=0.4, rely=0.25)
+        self.confirm_starting_state_button.place(relx=0.9, rely=0.6, anchor="center", relwidth=0.15)
+        self.next_state_button.place(relx=0.1, rely=0.55)
+        self.prev_state_button.place(relx=0.2, rely=0.55)
+        self.auto_evolve_button.place(relx=0.1, rely=0.65)
+        self.auto_evolve_interval_slider.place(relx=0.2, rely=0.65)
+        self.reset_button.place(relx=0.9, rely=0.75, anchor="center", relwidth=0.15)
         self.go_back_button.place(relx=0.01, rely=0.01)
 
     # commands
