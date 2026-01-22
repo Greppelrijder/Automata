@@ -103,7 +103,7 @@ class CA2D_SimScreen(Screen):
 
         self.header.config(text=f"Simulating 2D CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
         self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
-        self.ruleset_label.config(text=f"Rules: {self.ruleset}", font=custom_font2, background="#8D8A8A")
+        self.ruleset_label.config(text=f"Rules: {self.ruleset[0]}{self.ruleset[1]}{self.ruleset[2]}{self.ruleset[3]}{self.ruleset[4]}...{self.ruleset[-5]}{self.ruleset[-4]}{self.ruleset[-3]}{self.ruleset[-2]}{self.ruleset[-1]}", font=custom_font2, background="#8D8A8A")
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
         
         
@@ -130,7 +130,7 @@ class CA2D_SimScreen(Screen):
 
         self.confirm_starting_state_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
                                             fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
-        self.reset_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
+        self.reset_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
                                             fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
 
     def place_widgets(self) -> None:
