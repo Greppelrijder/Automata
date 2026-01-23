@@ -186,8 +186,6 @@ class CA1D_SimScreen(Screen):
         self.next_state_button.config(state="disabled")
         self.prev_state_button.config(state="disabled")
         self.auto_evolve_button.config(state="disabled")
-        self.auto_evolve_interval_slider.config(state="disabled")
-        self.reset_button.config(state="disabled")
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def on_auto_evolve_pressed(self) -> None:

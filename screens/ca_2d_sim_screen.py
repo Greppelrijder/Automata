@@ -181,9 +181,10 @@ class CA2D_SimScreen(Screen):
             self.draw_ca()
             self.ca_starting_state = self.ca.get_states()
         except IndexError: # no starting state -> default to 0's
-            for i in range(self.grid_size):
-                self.draw_cell(i, state=0)
-            self.ca_starting_state = [0 for _ in range(self.grid_size)]
+            for i in range(int(math.sqrt(self.grid_size))):
+                for j in range(int(math.sqrt(self.grid_size))):
+                    self.draw_cell(i, j, state=0)
+            self.ca_starting_state = [[0 for _ in range(int(math.sqrt(self.grid_size)))] for _ in range(int(math.sqrt(self.grid_size)))]
 
         self.ca.reset()
 
@@ -192,7 +193,6 @@ class CA2D_SimScreen(Screen):
         self.prev_state_button.config(state="disabled")
         self.auto_evolve_button.config(state="disabled")
         self.auto_evolve_interval_slider.config(state="disabled")
-        self.reset_button.config(state="disabled")
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def on_auto_evolve_pressed(self) -> None:
