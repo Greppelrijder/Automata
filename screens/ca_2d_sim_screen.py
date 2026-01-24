@@ -106,7 +106,8 @@ class CA2D_SimScreen(Screen):
         if self.ruleset == "00000000000000000000000000000000000000000000000100000000000000010000000000000001000000000000000100000001000101110000000100010110000000000000000100000000000000010000000100010111000000010001011000000001000101110000000100010110000101110111111000010110011010000000000000000001000000000000000100000001000101110000000100010110000000010001011100000001000101100001011101111110000101100110100000000001000101110000000100010110000101110111111000010110011010000001011101111110000101100110100001111110111010000110100010000000":
             self.ruleset_label.config(text="Rules: Conway's game of life", font=custom_font2, background="#8D8A8A")
         else:
-            self.ruleset_label.config(text=f"Rules: {self.ruleset[0]}{self.ruleset[1]}{self.ruleset[2]}{self.ruleset[3]}{self.ruleset[4]}...{self.ruleset[-5]}{self.ruleset[-4]}{self.ruleset[-3]}{self.ruleset[-2]}{self.ruleset[-1]}", font=custom_font2, background="#8D8A8A")
+            self.ruleset_label.config(text=f"Rules: {self.ruleset[0]}{self.ruleset[1]}{self.ruleset[2]}{self.ruleset[3]}{self.ruleset[4]}...{self.ruleset[-5]}{self.ruleset[-4]}{self.ruleset[-3]}{self.ruleset[-2]}{self.ruleset[-1]}",
+                                       font=custom_font2, background="#8D8A8A")
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
         
         
