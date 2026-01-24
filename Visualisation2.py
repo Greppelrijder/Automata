@@ -9,6 +9,8 @@ from screens.ca_1d_prep_screen import CA1D_PrepScreen
 from screens.ca_1d_sim_screen import CA1D_SimScreen
 from screens.ca_2d_prep_screen import CA2D_PrepScreen
 from screens.ca_2d_sim_screen import CA2D_SimScreen
+from screens.ca_2d_4_prep_screen import CA2D_4_PrepScreen
+from screens.ca_2d_4_sim_screen import CA2D_4_SimScreen
 
 root = tk.Tk()
 root.title("Cellular Automa in 1D and 2D")
@@ -22,6 +24,8 @@ ca_1d_prep_screen = CA1D_PrepScreen(root)
 ca_1d_sim_screen = CA1D_SimScreen(root)
 ca_2d_prep_screen = CA2D_PrepScreen(root)
 ca_2d_sim_screen = CA2D_SimScreen(root)
+ca_2d_4_prep_screen = CA2D_4_PrepScreen(root)
+ca_2d_4_sim_screen = CA2D_4_SimScreen(root)
 
 screen_manager.register(ScreenList.StartingScreen, starting_screen)
 screen_manager.register(ScreenList.MainMenu, main_menu)
@@ -29,6 +33,8 @@ screen_manager.register(ScreenList.CA1D_Preparation, ca_1d_prep_screen)
 screen_manager.register(ScreenList.CA1D_Simulation, ca_1d_sim_screen)
 screen_manager.register(ScreenList.CA2D_Preparation, ca_2d_prep_screen)
 screen_manager.register(ScreenList.CA2D_Simulation, ca_2d_sim_screen)
+screen_manager.register(ScreenList.CA2D_4_Preparation, ca_2d_4_prep_screen)
+screen_manager.register(ScreenList.CA2D_4_Simulation, ca_2d_4_sim_screen)
 
 screen_manager.execute(ScreenList.StartingScreen, None)
 

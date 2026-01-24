@@ -99,7 +99,7 @@ class CA1D_SimScreen(Screen):
 
         self.header.config(text=f"Simulating 1D CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
         self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
-        self.ruleset_label.config(text=f"Rules: {self.ruleset}", font=custom_font2, background="#8D8A8A")
+        self.ruleset_label.config(text=f"Rules: {self.ruleset} (Rule: {int(self.ruleset,2)})", font=custom_font2, background="#8D8A8A")
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
         
         

@@ -21,6 +21,9 @@ class MainMenu(Screen):
         self.ca_2d_button: tk.Button = tk.Button(self.frame, text="2D", border=5,background="#2DE840", activebackground="#178122", 
                                                      fg="#202020", activeforeground="#202020", font=custom_font, justify="center",
                                                      command= lambda: execute(ScreenList.CA2D_Preparation, None))
+        self.ca_2d_4_button: tk.Button = tk.Button(self.frame, text="2D with 4 neighbours", border=5,background="#2DE840", activebackground="#178122", 
+                                                     fg="#202020", activeforeground="#202020", font=custom_font, justify="center",
+                                                     command= lambda: execute(ScreenList.CA2D_4_Preparation, None))
 
 
     def run(self, args) -> None:
@@ -29,3 +32,4 @@ class MainMenu(Screen):
         self.go_back_button.place(relx=0.01, rely=0.01, anchor="nw")
         self.ca_1d_button.place(relx=1/3, rely=0.55, anchor="center")
         self.ca_2d_button.place(relx=2/3, rely=0.55, anchor="center")
+        self.ca_2d_4_button.place(relx=0.5, rely=0.8, anchor="center")

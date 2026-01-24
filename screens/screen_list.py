@@ -7,3 +7,5 @@ class ScreenList(Enum):
     CA1D_Simulation = 3
     CA2D_Preparation = 4
     CA2D_Simulation = 5
+    CA2D_4_Preparation = 6
+    CA2D_4_Simulation = 7
