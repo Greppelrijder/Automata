@@ -9,11 +9,11 @@ from .screen_manager import execute
 from .screen import Screen
 
 sys.path.append("..")
-from models.ca_2d import CA_2D
+from models.ca_2d_4 import CA_2D_4
 from models.boundry_conditions import BoundryConditions
 
 
-class CA2D_SimOptions:
+class CA2D_4_SimOptions:
 
     def __init__(self, size: int, ruleset: str, boundry_conditions: BoundryConditions, name: str, alive_cell_color: str, dead_cell_color: str):
         self.size = size
@@ -23,7 +23,7 @@ class CA2D_SimOptions:
         self.alive_cell_color = alive_cell_color
         self.dead_cell_color = dead_cell_color
 
-class CA2D_SimScreen(Screen):
+class CA2D_4_SimScreen(Screen):
 
 
     CA_CANVAS_WIDTH = 250
@@ -71,8 +71,8 @@ class CA2D_SimScreen(Screen):
         super().cleanup()
 
     def parse_args(self, args) -> None:
-        if not isinstance(args, CA2D_SimOptions):
-            raise ValueError(f"For ca_2d_sim_screen, the 'args' parameter must be of type CA2D_SimScreenArgs (got {type(args)})")
+        if not isinstance(args, CA2D_4_SimOptions):
+            raise ValueError(f"For ca_2d_4_sim_screen, the 'args' parameter must be of type CA2D_4_SimScreenArgs (got {type(args)})")
         
         self.grid_size = args.size**2
         self.ruleset = args.ruleset
@@ -83,7 +83,7 @@ class CA2D_SimScreen(Screen):
 
     def setup_ca(self) -> None:
 
-        self.ca = CA_2D(self.grid_size, self.ruleset, self.boundry_conditions)
+        self.ca = CA_2D_4(self.grid_size, self.ruleset, self.boundry_conditions)
 
         self.ca_cell_width = self.CA_CANVAS_WIDTH / int(math.sqrt(self.grid_size))
         self.ca_starting_state: list[list[int]] = [[0 for _ in range(int(math.sqrt(self.grid_size)))] for _ in range(int(math.sqrt(self.grid_size)))]
@@ -101,18 +101,15 @@ class CA2D_SimScreen(Screen):
         custom_font1 = tkFont.Font(family="Arial", size=25)
         custom_font2 = tkFont.Font(family="Arial", size=15)
 
-        self.header.config(text=f"Simulating 2D CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
+        self.header.config(text=f"Simulating 2D CA with 4 neighbours '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
         self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
-        if self.ruleset == "00000000000000000000000000000000000000000000000100000000000000010000000000000001000000000000000100000001000101110000000100010110000000000000000100000000000000010000000100010111000000010001011000000001000101110000000100010110000101110111111000010110011010000000000000000001000000000000000100000001000101110000000100010110000000010001011100000001000101100001011101111110000101100110100000000001000101110000000100010110000101110111111000010110011010000001011101111110000101100110100001111110111010000110100010000000":
-            self.ruleset_label.config(text="Rules: Conway's game of life", font=custom_font2, background="#8D8A8A")
-        else:
-            self.ruleset_label.config(text=f"Rules: {self.ruleset[0]}{self.ruleset[1]}{self.ruleset[2]}{self.ruleset[3]}{self.ruleset[4]}...{self.ruleset[-5]}{self.ruleset[-4]}{self.ruleset[-3]}{self.ruleset[-2]}{self.ruleset[-1]}",
+        self.ruleset_label.config(text=f"Rules: {self.ruleset[0]}{self.ruleset[1]}{self.ruleset[2]}{self.ruleset[3]}{self.ruleset[4]}...{self.ruleset[-5]}{self.ruleset[-4]}{self.ruleset[-3]}{self.ruleset[-2]}{self.ruleset[-1]}",
                                        font=custom_font2, background="#8D8A8A")
         self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
         
         
         self.go_back_button.config(font=custom_font1, border=5, background="#2DE840", activebackground="#178122", fg="#202020", activeforeground="#202020", anchor="center",
-                                    command= lambda: execute(ScreenList.CA2D_Preparation, CA2D_SimOptions(
+                                    command= lambda: execute(ScreenList.CA2D_4_Preparation, CA2D_4_SimOptions(
             int(math.sqrt(self.grid_size)),
             self.ruleset,
             self.boundry_conditions,
