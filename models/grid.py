@@ -1,7 +1,7 @@
-from .boundry_conditions import BoundryConditions
-from .cell import Cell
 from abc import ABC, abstractmethod
 
+from .boundry_conditions import BoundryConditions
+from .cell import Cell
 
 class InvalidRulesetError(Exception):
     """
@@ -15,6 +15,14 @@ class InvalidRulesetError(Exception):
 class InvalidStateError(Exception):
     """
     This error occurs when a cell within a Grid would receive a state that is not allowed
+    """
+    def __init__(self, message) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+class CANotInitializedError(Exception):
+    """
+    This error occurs when a CA is being evolved whilst it has not yet been assigned a starting state
     """
     def __init__(self, message) -> None:
         self.message = message
@@ -35,7 +43,7 @@ class Grid(ABC):
         :type cells: int (>0)
         :param states: Determines the amount of different states a cell can be in
         :type states: int (>0 and <11)
-        :param neighbours: Determines the amount of cells that any particular cell is connected to
+        :param neighbours: Determines the amount of cells that any particular cell is connected to (not counting the cell itself)
         :type neighbours: int (>0)
         :param rules: The ruleset is used to determine a cell's next state when evolving a grid. The ruleset is a string of digits which represents a mapping between possible 'neighbourhoods' and resulting new states. A neighbourhood is defined as the set of states of all the cells that a particular cell is connected to (including itself), in a particular order.
         :type rules: str (of digits)
@@ -64,13 +72,17 @@ class Grid(ABC):
         self.boundry_conditions: BoundryConditions = boundry_conditions
 
 
-    
-
     def validate_ruleset(self) -> None:
         """
         Check if the assigned ruleset satisfies the following conditions:
         1) The length of the ruleset is equal to the amount of possible neighbourhoods for this Grid
         2) The ruleset contains only digits that are smaller than the amount of states for this Grid
+        
+        Errors:
+        * InvalidRulesetError: this error will be raised if any of the above mentioned conditions are not met
+
+        The ruleset is considered valid if this method does not raise any errors
+
         """
         if len(self.ruleset) != self.amount_of_neighbourhood_states():
             raise InvalidRulesetError(f"Incorrect length of ruleset, length must be {self.amount_of_neighbourhood_states()}.")

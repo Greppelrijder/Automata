@@ -2,7 +2,7 @@ from copy import deepcopy
 from .boundry_conditions import BoundryConditions
 from .grid import Grid, InvalidStateError
 from .cell import Cell
-from .ca_1d import CANotInitializedError
+from .grid import CANotInitializedError
 import math
 
 class CA_2D_4(Grid):
