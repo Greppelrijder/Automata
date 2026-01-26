@@ -5,7 +5,14 @@ from .screen_manager import execute
 from .screen import Screen
 
 class MainMenu(Screen):
-
+    """
+    The starting screen features:
+    * A button to go back to the starting screen
+    * A button to go to the 1d CA case
+    * A button to go to the 2d CA case with eight neighbours
+    * A button to go to the 2d CA case with four neighbours
+    """
+        
     def __init__(self, root: tk.Tk):
         super().__init__(root)
 
@@ -27,6 +34,9 @@ class MainMenu(Screen):
 
 
     def run(self, args) -> None:
+        """
+        For this Screen, the 'args' parameter is unused
+        """
         self.frame.place(x = 0, y = 0)
         self.header.place(relx=0.5, rely=0.15, anchor="center")
         self.go_back_button.place(relx=0.01, rely=0.01, anchor="nw")

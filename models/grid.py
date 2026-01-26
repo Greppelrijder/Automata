@@ -31,7 +31,7 @@ class CANotInitializedError(Exception):
 class Grid(ABC):
 
     """
-    The gridclass provides an abstract layer for all different types of cellular automata (CA)
+    The Grid class provides an abstract layer for all different types of cellular automata (CA)
     """
 
     def __init__(self, cells: int, states: int, neighbours: int, rules: str, boundry_conditions: BoundryConditions):

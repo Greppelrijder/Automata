@@ -9,7 +9,10 @@ from .screen import Screen
 
 
 class StartingScreen(Screen):
-
+    """
+    The starting screen features:
+    * A button that brings the user to the main menu  
+    """
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
 
@@ -24,6 +27,9 @@ class StartingScreen(Screen):
                                                      command= lambda : execute(ScreenList.MainMenu, None))
 
     def run(self, args) -> None:
+        """
+        For this Screen, the 'args' parameter is unused
+        """
         self.frame.place(x = 0, y = 0)
         self.header.place(relx=0.5, rely=0.15, anchor="center")
         self.main_menu_button.place(relx=0.5, rely=0.5, anchor="center")
