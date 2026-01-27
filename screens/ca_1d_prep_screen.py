@@ -7,11 +7,23 @@ from .screen_manager import execute
 from .screen import Screen
 from .ca_1d_sim_screen import CA1D_SimOptions
 
+# this feels a bit hacky but for the scale of this project, it should be fine
 sys.path.append("..")
 from models.boundry_conditions import BoundryConditions
 
 class CA1D_PrepScreen(Screen):
-    
+    """
+    The 1d CA preparation screen features:
+    * A button that brings the user back to the main menu
+    * A slider to set the CA's size
+    * An entry to set the CA's ruleset
+    * A dropdown to pick boundry conditions
+    * An entry to choose the CA's name
+    * Colorpickers to set the color of dead and alive cells
+    * A button that submits the presets and takes the user to the simulation screen
+    * Automatic warnings that show on invalid input
+    """
+        
     MAX_NAME_LENGTH = 15
 
     def __init__(self, root: tk.Tk) -> None:
@@ -65,13 +77,19 @@ class CA1D_PrepScreen(Screen):
         self.ca_name_validation_callback_id: str = ""
 
     def run(self, args) -> None:
-        
+        """
+        For this screen, 'args' is optional. The parameter *can* be read to set default values (type must be CA1D_SimOptions). This behaviour is mainly used when returning to this screen from the simulation screen. The presets of the CA that was being simulated are copied.
+        """
         self.frame.place(x = 0, y = 0)
         self.parse_args(args)
         self.place_widgets()
         self.configure_input_warnings()
 
     def cleanup(self) -> None:
+        """
+        Un-links automatic input checks from the inputvariables that they were associated with (if any). Removes warnings (if any).
+        """
+
         # forget callbacks
         try: self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
         except (ValueError, tk.TclError): pass
@@ -83,6 +101,9 @@ class CA1D_PrepScreen(Screen):
         super().cleanup()
         
     def parse_args(self, args) -> None:
+        """
+        This method determines what presets should be used for input widgets (e.g. the size slider). If the 'args' parameter is of type CA1D_SimOptions, then it will determine what presets to use (e.g. set size slider to 15). Default values are used otherwise (e.g. size slider defaults to 9).
+        """
         if isinstance(args, CA1D_SimOptions): # use presets that were passed through args
             size_preset = args.size
             ruleset_preset = args.ruleset
@@ -106,6 +127,10 @@ class CA1D_PrepScreen(Screen):
         self.dead_cell_color_button.config(bg=dead_cell_color_preset)
 
     def place_widgets(self) -> None:
+        """
+        Puts most widgets on the screen. Input warnings are excluded.
+        """
+
         self.header.place(relx=0.5, rely=0.1, anchor="center")
         self.go_back_button.place(relx=0.01, rely=0.01)
 
@@ -128,11 +153,17 @@ class CA1D_PrepScreen(Screen):
         self.create_button.place(relx=0.5, rely=0.85, anchor="center")
 
     def configure_input_warnings(self) -> None:
+        """
+        Links input checks to the corresponding input variable. Whenever the variable in question is changed, a check is made to determine whether or not a warning should be displayed.  
+        """
         self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
         self.ruleset_validation_callback_id = self.ruleset.trace_add("write", callback= lambda *args: self.validate_ruleset())
 
     # input validations
     def validate_name(self) -> bool:
+        """
+        If the name that the user has input so far is non-empty and contains at most MAX_NAME_LENGTH characters, the input warning (if present) is removed and True is returned; otherwise, the input warning is placed and False is returned.
+        """
         if len(self.ca_name.get()) == 0 or len(self.ca_name.get()) > 15:
             self.invalid_name_warning.place(relx=0.5, rely=0.45)
             return False
@@ -141,6 +172,9 @@ class CA1D_PrepScreen(Screen):
             return True
         
     def validate_ruleset(self) -> bool:
+        """
+        If the ruleset that the user has input so far consists of eight characters and contains only 1's and 0's, the input warning (if present) is removed and True is returned; otherwise, the input warning is placed (with the relevant message) and False is returned.
+        """
         ruleset_value = self.ruleset.get()
         if len(ruleset_value) != 8:
             self.invalid_ruleset_warning.config(text="Ruleset must consist of 8 characters")
@@ -156,16 +190,25 @@ class CA1D_PrepScreen(Screen):
     
     # buttons
     def on_choose_alive_cell_color(self) -> None:
+        """
+        Prompts the user with a colorpicker and sets the color of the corresponding button to the chosen color (if any)
+        """
         choice_hex = tkinter.colorchooser.askcolor()[1]
         if choice_hex is not None:
             self.alive_cell_color_button.config(bg=choice_hex)
 
     def on_choose_dead_cell_color(self) -> None:
+        """
+        Prompts the user with a colorpicker and sets the color of the corresponding button to the chosen color (if any)
+        """
         choice_hex = tkinter.colorchooser.askcolor()[1]
         if choice_hex is not None:
             self.dead_cell_color_button.config(bg=choice_hex)
 
     def on_create(self) -> None:
+        """
+        First a check is made to ensure that all input is valid. If so, all input values are passed on to the simulation screen and that screen runs.
+        """
         if not (self.validate_name() and self.validate_ruleset()):
             return
         size = int(self.size_slider.get())

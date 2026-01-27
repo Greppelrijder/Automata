@@ -23,9 +23,17 @@ class CA1D_SimOptions:
 
 class CA1D_SimScreen(Screen):
 
+    """
+    The 1d CA simulation screen features:
+    * A button that brings the user back to the preparation screen
+    * A canvas that displays the CA; canvas is clickable to allow the user to choose a starting state
+    * A confirm button to fix the starting state
+    * One button to evolve the CA to its next state; one to go back to the previous state
+    * A reset button to allow the user to modify the starting state and restart the CA
+    * A button to let the CA evolve automatically (or stop it), as well as a slider to determine the interval between consecutive evolves
+    """
 
     CA_REL_CANVAS_WIDTH = 0.3
-
 
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
@@ -51,7 +59,9 @@ class CA1D_SimScreen(Screen):
         self.loop_evolve_id: str = ""
 
     def run(self, args) -> None:
-        
+        """
+        For this screen, 'args' is required. The parameter must be of type CA1D_SimOptions and is needed to create the correct 1D CA
+        """
         self.parse_args(args)
         self.frame.place(x = 0, y = 0)
         self.setup_ca()
@@ -59,6 +69,9 @@ class CA1D_SimScreen(Screen):
         self.place_widgets()
 
     def cleanup(self) -> None:
+        """
+        Stops looping callbacks (if any)
+        """
         # forget callbacks (if any)
         try: self.frame.after_cancel(self.loop_evolve_id)
         except (ValueError, tk.TclError): pass
@@ -67,6 +80,12 @@ class CA1D_SimScreen(Screen):
         super().cleanup()
 
     def parse_args(self, args) -> None:
+        """
+        The type of 'args' must be CA1D_SimOptions
+
+        Errors:
+        * ValueError: this error will be raised if the type of 'args' is not CA1D_SimOptions
+        """
         if not isinstance(args, CA1D_SimOptions):
             raise ValueError(f"For ca_1d_sim_screen, the 'args' parameter must be of type CA1D_SimScreenArgs (got {type(args)})")
         
@@ -78,21 +97,25 @@ class CA1D_SimScreen(Screen):
         self.dead_cell_color = args.dead_cell_color
 
     def setup_ca(self) -> None:
-
-        self.ca = CA_1D(self.grid_size, self.ruleset, self.boundry_conditions)
-        self.ca_starting_state: list[int] = [0 for _ in range(self.grid_size)]
+        """
+        Creates the 1D CA according to the information passed through 'args' (see parse_args) and configures the canvas to display said CA. The canvas starts empty (all cells are dead), but it can be clicked to modify this starting state.
+        """
 
         ca_canvas_width: float = self.CA_REL_CANVAS_WIDTH * self.frame["width"]
         self.ca_cell_width: float = ca_canvas_width / self.grid_size
         self.ca_canvas.place(relx=0.5, rely=0.5, anchor="center", width=ca_canvas_width, height=self.ca_cell_width)
         
+        self.ca = CA_1D(self.grid_size, self.ruleset, self.boundry_conditions)
+        self.ca_starting_state: list[int] = [0 for _ in range(self.grid_size)]
         for i in range(self.grid_size):
             self.draw_cell(i, state=0)
 
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def configure_widgets(self) -> None:
-
+        """
+        Ensures all widgets have the correct presets for the start of this screen. This includes the enabling and disabling of buttons.
+        """
         # create costum font
         custom_font1 = tkFont.Font(family="Arial", size=25)
         custom_font2 = tkFont.Font(family="Arial", size=15)
@@ -130,6 +153,9 @@ class CA1D_SimScreen(Screen):
                                             fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
 
     def place_widgets(self) -> None:
+        """
+        Places all widget onto the screen
+        """
         self.header.place(relx=0.5, rely=0.1, anchor="center")
         self.size_label.place(relx=0.4, rely=0.15)
         self.ruleset_label.place(relx=0.4, rely=0.2)
@@ -144,11 +170,18 @@ class CA1D_SimScreen(Screen):
 
     # commands
     def on_ca_canvas_clicked(self, args: tk.Event) -> None:
+        """
+        Calculates which cell was clicked, flips the state of that cell (dead <-> alive) and redraws it accordingly
+        """
         index: int = int(args.x // self.ca_cell_width) # which cell was clicked
         self.ca_starting_state[index] = 1 - self.ca_starting_state[index] # flip cell's state
         self.draw_cell(index, self.ca_starting_state[index])
 
+    # buttons
     def on_confirm_starting_state(self) -> None:
+        """
+        Fixes the current starting state for the CA and allows the user to start evolving it
+        """
         self.ca_canvas.unbind("<Button-1>", self.ca_canvas_click_callback_id)
         self.ca.configure_initial_state(self.ca_starting_state)
         self.confirm_starting_state_button.config(state="disabled")
@@ -159,10 +192,16 @@ class CA1D_SimScreen(Screen):
         self.reset_button.config(state="normal")
 
     def on_next_state(self) -> None:
+        """
+        Evolves the CA and redraws it accordingly
+        """
         self.ca.evolve()
         self.draw_ca()
 
     def on_prev_state(self) -> None:
+        """
+        Sets the CA back to its previous state (if possible) and redraws it accordingly
+        """
         try:
             self.ca.devolve()
         except IndexError:
@@ -170,7 +209,11 @@ class CA1D_SimScreen(Screen):
         self.draw_ca()
 
     def on_reset(self) -> None:
+        """
+        Sets the CA back to its initial state and allows modification of the starting state. If the CA had no starting state yet, then the canvas is cleared (all cells are dead).
 
+        After pressing this button, the user can no longer evolve the CA (until starting state is confirmed again).
+        """
         try: # use ca's starting state
             self.ca.goto_state(0)
             self.draw_ca()
@@ -189,7 +232,11 @@ class CA1D_SimScreen(Screen):
         self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
 
     def on_auto_evolve_pressed(self) -> None:
-        
+        """
+        Turns auto-evolve on if was off and vice versa. While auto evolve is on, all other input widgets are disabled (except the 'back' button). When auto-evolve is turned off again, relevant buttons will be re-enabled. 
+
+        While in auto-evolve mode, the CA is evolved repeatedly. The interval between consecutive evolves is determined by the value of the auto-evolve interval slider (which cannot be modified while auto-evolve mode is active).
+        """
         if self.auto_evolve_button_text.get() == "auto":
 
             self.next_state_button.config(state="disabled")
@@ -211,16 +258,26 @@ class CA1D_SimScreen(Screen):
 
     # helper functions
     def loop_evolve(self, interval_milliseconds: int) -> None:
+        """
+        Evolves the CA (by calling 'on_next_state') and schedules another call to this function after 'inteval_milliseconds' milliseconds (creating a loop). The id of the scheduled call is stored so that it can be cancelled later (breaking the loop).
+        """
         self.on_next_state()
         self.loop_evolve_id = self.frame.after(interval_milliseconds, self.loop_evolve, interval_milliseconds)
 
     
     def draw_cell(self, index: int, state: int = 0):
+        """
+        Draws a square onto the canvas in the position determined by 'index', that has the color matching 'state' (dead/0 or alive/1).
+        The cell is assumed to be dead if any other value than 0 or 1 is passed through 'state'.
+        """
         top_left = (index*self.ca_cell_width, 0)
         bottom_right = ((index+1)*self.ca_cell_width, self.ca_cell_width)
         fill_color = self.alive_cell_color if state == 1 else self.dead_cell_color
         self.ca_canvas.create_rectangle(top_left, bottom_right, fill=fill_color, outline="black")
 
     def draw_ca(self):
+        """
+        Draws all cells (see draw_cell) associated with this screen's CA
+        """
         for index, cell_state in enumerate(self.ca.get_state()):
             self.draw_cell(index, cell_state)
