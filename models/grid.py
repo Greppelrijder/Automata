@@ -70,7 +70,7 @@ class Grid(ABC):
         if cells <= 0:
             raise ValueError(f"Parameter 'cells' must be at least 1 (got {cells})")
         if neighbours <= 0:
-            raise ValueError(f"Parameter 'cells' must be at least 1 (got {neighbours})")
+            raise ValueError(f"Parameter 'neighbours' must be at least 1 (got {neighbours})")
         self.validate_ruleset()
         
 
