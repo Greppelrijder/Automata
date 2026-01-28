@@ -43,7 +43,8 @@ class CA_2D(Grid):
 
         self.cells: list[list[Cell]] = []
         for _ in range(self.side_length):
-            self.cells.append([Cell() for _ in range(self.side_length)])
+            row: list[Cell] = [Cell() for _ in range(self.side_length)]
+            self.cells.append(row)
 
         for row_number, row in enumerate(self.cells):
             for column_number, cell in enumerate(row):
@@ -81,42 +82,38 @@ class CA_2D(Grid):
                 result_column: int = CA_2D.fit_in_range(target_column, 0, self.side_length)
                 return self.cells[result_row][result_column]
             
-    def configure_initial_state(self, states: list[list[int]]) -> None:
+    def configure_initial_state(self, initial_state: list[list[int]]) -> None:
         """
-        Set the state of each cell to the corresponding value in 'states'
+        We only expand the base class functionality by adding a parameter check
 
         Errors:
-        * InvalidStateError: this error is raised if 'states' contains integers that are not 0 or 1
+        * InvalidStateError: this error occurs when initial state contains integers other than 0 or 1
         """
 
-        for row in states:
+        for row in initial_state:
             if not all(s in range(0, self.amount_of_states) for s in row):
-                raise InvalidStateError(f"Cannot configure initial state '{states}'; the only allowed states are: {[range(0, self.amount_of_states)]}")
-        
-        for row, new_row_states in zip(self.cells, states):
-            for cell, new_state in zip(row, new_row_states):
-                cell.state = new_state
+                raise InvalidStateError(f"Cannot configure initial state '{initial_state}'; the only allowed states are: {[range(0, self.amount_of_states)]}")
+        super().configure_initial_state(initial_state)
 
-        self.history = []
-        self.history.append(states)
-        self.current_state_index = 0
 
-    def evolve(self) -> None:
+    def get_state(self, index: None | int = None) -> list[list[int]]:
+        # we override the base method so that we can give a more precise return type
+        return super().get_state(index)
+
+
+    def reset(self) -> None:
         """
-        Update each cell according to the given ruleset and the state of its neighbourhood.
-        All cells are updated simultaneously.
-
-        Errors:
-        * CANotInitializedError: This error occurs when the CA has not yet been assigned a starting state
+        We expand the base class functionality by setting each cell's state to 0
         """
-        # setup for history
-        if self.current_state_index == None:
-            raise CANotInitializedError("Cannot evolve CA because it has no starting state")
-        if self.current_state_index < (len(self.history) - 1): # next state has already been calculated
-            self.goto_state(self.current_state_index + 1)
-            return
-        
-        # first, we figure out what al new states should be
+        for row in self.cells:
+            for cell in row:
+                cell.state = 0
+        super().reset()
+
+    def determine_next_state(self) -> list[list[int]]:
+        """
+        Finds the states of each cell's neighbours and uses the ruleset to determine the appropriate next state for that particular cell 
+        """
         result: list[list[int]] = []
         for row in self.cells:
             new_row: list[int] = []
@@ -127,62 +124,12 @@ class CA_2D(Grid):
                 new_state: int = int(self.ruleset[index])
                 new_row.append(new_state)
             result.append(new_row)
-
-        # finally, we update all cells with their new state
-        for row, new_row_values in zip(self.cells, result):
+        return result
+    
+    def set_state(self, state: list[list[int]]) -> None:
+        """
+        Assigns each cell the corresponding cell_state in 'state'
+        """
+        for row, new_row_values in zip(self.cells, state):
             for cell, new_value in zip(row, new_row_values):
                 cell.state = new_value
-
-        # record state
-        self.history.append(deepcopy(result))
-        self.current_state_index += 1
-
-    def get_states(self) -> list[list[int]]:
-        """
-        Retrieve the full state of this CA (i.e. a list of its cells' states).
-        An index may be specified to access a different state than the current one.
-
-        Errors:
-        * IndexError: this error occurs when 'index' is too large (the associated state has not yet been reached)
-        """
-        return [[c.state for c in row] for row in self.cells]
-    
-    def goto_state(self, index: int) -> None:
-        """
-        Set this CA to one of its recorded states (e.g. go back to starting state, go forward to current state)
-
-        Errors:
-        * IndexError: this error occurs when 'index' is too large (the associated state has not yet been reached)
-        """
-        try:
-            target_state = self.history[index]
-        except IndexError:
-            raise IndexError(f"Cannot go to state {index} for this CA, because it does not exist")
-        
-        self.current_state_index = index
-        for row, new_row_values in zip(self.cells, target_state):
-            for cell, state in zip(row, new_row_values):
-                cell.state = state
-        
-    def devolve(self) -> None:
-        """
-        Set this CA to its previous state
-
-        Errors:
-        * IndexError: this error is raised if the CA has no previous state
-        """
-
-        if self.current_state_index is None or self.current_state_index == 0:
-            raise IndexError(f"Cannot devolve CA because there is no previous state")
-        else:
-            self.goto_state(self.current_state_index - 1)
-
-    def reset(self) -> None:
-        """
-        Set all cell states to 0; forget all recorded states.
-        """
-        for row in self.cells:
-            for cell in row:
-                cell.state = 0
-        self.history = []
-        self.current_state_index = None

@@ -24,8 +24,7 @@ class CA2D_SimOptions:
         self.dead_cell_color = dead_cell_color
 
 class CA2D_SimScreen(Screen):
-
-
+        
     CA_CANVAS_WIDTH = 250
 
 
@@ -183,7 +182,7 @@ class CA2D_SimScreen(Screen):
         try: # use ca's starting state
             self.ca.goto_state(0)
             self.draw_ca()
-            self.ca_starting_state = self.ca.get_states()
+            self.ca_starting_state = self.ca.get_state()
         except IndexError: # no starting state -> default to 0's
             for i in range(int(math.sqrt(self.grid_size))):
                 for j in range(int(math.sqrt(self.grid_size))):
@@ -233,6 +232,6 @@ class CA2D_SimScreen(Screen):
         self.ca_canvas.create_rectangle(top_left, bottom_right, fill=fill_color, outline="black")
 
     def draw_ca(self):
-        for row_number, row in enumerate(self.ca.get_states()):
+        for row_number, row in enumerate(self.ca.get_state()):
             for column_number, cell_state in enumerate(row):
                 self.draw_cell(row_number, column_number, cell_state)

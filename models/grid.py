@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-
+from copy import deepcopy
+from typing import Any
 from .boundry_conditions import BoundryConditions
 from .cell import Cell
 
@@ -34,6 +35,7 @@ class Grid(ABC):
     The Grid class provides an abstract layer for all different types of cellular automata (CA)
     """
 
+
     def __init__(self, cells: int, states: int, neighbours: int, rules: str, boundry_conditions: BoundryConditions):
         
         """
@@ -61,15 +63,20 @@ class Grid(ABC):
         if cells <= 0:
             raise ValueError(f"Parameter 'cells' must be at least 1 (got {cells})")
         if neighbours <= 0:
-            raise ValueError(f"Parameter 'cells' must be at least 1 (got {neighbours})")
-        self.validate_ruleset()
-        
+            raise ValueError(f"Parameter 'cells' must be at least 1 (got {neighbours})")        
         
         self.amount_of_cells: int = cells
         self.amount_of_states: int = states
         self.amount_of_neighbours: int = neighbours
         self.ruleset: str = rules
         self.boundry_conditions: BoundryConditions = boundry_conditions
+        self.validate_ruleset()
+
+        # we need to remember previous states
+        self.cells = []
+        self.history: list = []
+        self.current_state_index: int | None = None
+        
 
 
     def validate_ruleset(self) -> None:
@@ -103,11 +110,104 @@ class Grid(ABC):
         """
         return "".join(str(cell.state) for cell in neighbourhood)
 
-    @abstractmethod
+
+
+    def configure_initial_state(self, initial_state) -> None:
+        """
+        Set the state of each cell to the corresponding value in 'initial_state'
+        """
+        self.set_state(initial_state)
+        self.history = []
+        self.history.append(initial_state)
+        self.current_state_index = 0
+
+
     def evolve(self) -> None:
         """
-        This method is responsible for updating all cells to their next state, depending on the current state of the grid.
-        This method cannot be implemented at an abstract level, because each CA may store its cells in a different way.
-        Each child class therefore has to implement their own version.
+        Update each cell according to the given ruleset and the state of its neighbourhood.
+        All cells are updated simultaneously.
+
+        Errors:
+        * CANotInitializedError: This error occurs when the CA has not yet been assigned a starting state
+        """
+
+        # non-standard cases
+        if self.current_state_index == None:
+            raise CANotInitializedError("Cannot evolve CA because it has no starting state")
+        if self.current_state_index < (len(self.history) - 1): # next state has already been calculated
+            self.goto_state(self.current_state_index + 1)
+            return
+        
+        # standard case
+        new_state = self.determine_next_state()
+        self.set_state(new_state)
+        # record state
+        self.history.append(deepcopy(new_state))
+        self.current_state_index += 1
+    
+    def goto_state(self, index: int) -> None:
+        """
+        Set this CA to one of its recorded states (e.g. go back to starting state, go forward to current state)
+
+        Errors:
+        * IndexError: this error occurs when 'index' is too large (the associated state has not yet been reached)
+        """
+        try:
+            target_state = self.history[index]
+        except IndexError:
+            raise IndexError(f"Cannot go to state {index} for this CA, because it does not exist")
+        
+        self.current_state_index = index
+        self.set_state(target_state)
+
+    def devolve(self) -> None:
+        """
+        Set this Grid to its previous state
+
+        Errors:
+        * IndexError: this error is raised if the CA has no previous state
+        """
+        if self.current_state_index is None or self.current_state_index == 0:
+            raise IndexError(f"Cannot devolve CA because there is no previous state")
+        else:
+            self.goto_state(self.current_state_index - 1)
+    
+    def get_state(self, index: int | None = None) -> Any:
+        """
+        Retrieve the full state of this CA (i.e. the combination of its cells' states).
+        An index may be specified to access a different state than the current one.
+
+        Errors:
+        * IndexError: this error occurs when 'index' is too large (the associated state has not yet been reached)
+        """
+        if (index is None) and (self.current_state_index is not None): # assume current state
+            return self.history[self.current_state_index]
+        elif index is None: # not state to use
+            raise CANotInitializedError(f"Cannot get this CA's state, because it has not yet been initialized")
+
+        try: # from this point on, index is not None
+            return self.history[index]
+        except IndexError:
+            raise IndexError(f"Cannot get state with index {index}, because it does not exist")
+ 
+    @abstractmethod
+    def reset(self) -> None:
+        """
+        Forget all recorded states; the resetting of the CA itself should be handled by child classes
+        """
+        self.history = []
+        self.current_state_index = None
+
+    @abstractmethod
+    def determine_next_state(self) -> object:
+        """
+        There is no uniform way to determine a CA's next state, since each child class might use a different datastructure to store its cells. Each childclass will therefore have to implement this functionality for its datastructure
+        """
+        pass
+
+    @abstractmethod
+    def set_state(self, state) -> None:
+        """
+        There is no uniform way to set a CA's state, since each child class might use a different datastructure to store its cells. Each childclass will therefore have to implement this functionality for its datastructure
         """
         pass

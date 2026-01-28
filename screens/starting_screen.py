@@ -6,8 +6,6 @@ from .screen_manager import execute
 from .screen import Screen
 
 
-
-
 class StartingScreen(Screen):
     """
     The starting screen features:

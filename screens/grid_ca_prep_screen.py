@@ -2,52 +2,68 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.colorchooser
 import sys
+
+from abc import ABC, abstractmethod
+from .screen import Screen
 from .screen_list import ScreenList
 from .screen_manager import execute
-from .screen import Screen
-from .ca_2d_sim_screen import CA2D_SimOptions
 
 sys.path.append("..")
 from models.boundry_conditions import BoundryConditions
 
-class CA2D_PrepScreen(Screen):
+
+class GridCA_SimOptions:
+
+    def __init__(self, size: int, ruleset: str, boundry_conditions: BoundryConditions, name: str, alive_cell_color: str, dead_cell_color: str):
+        self.size = size
+        self.ruleset = ruleset
+        self.boundry_conditions = boundry_conditions
+        self.name = name
+        self.alive_cell_color = alive_cell_color
+        self.dead_cell_color = dead_cell_color
+
+
+
+class GridCA_PrepScreen(Screen, ABC):
     """
-    The 2d CA preparation screen features:
+    The Grid-CA preparation screen provides another abstract screen layer, capturing the functionality that is shared between all grid-based CA preparation screens (regardless of dimension or neighbour count). Any grid-based CA preparation screen features:
     * A button that brings the user back to the main menu
-    * A slider to set the CA's size (i.e. the side length of the grid)
+    * A slider to set the CA's size
     * An entry to set the CA's ruleset
     * A dropdown to pick boundry conditions
     * An entry to choose the CA's name
     * Colorpickers to set the color of dead and alive cells
     * A button that submits the presets and takes the user to the simulation screen
     * Automatic warnings that show on invalid input
+
+    Each individual preparation screen can decide on its own design and specific implementations
     """
-        
+
     MAX_NAME_LENGTH = 15
 
-    def __init__(self, root: tk.Tk) -> None:
-        super().__init__(root)
+    def __init__(self, root: tk.Tk):
 
-        # create costum font
         custom_font = tkFont.Font(family="Arial", size=25)
         custom_font2 = tkFont.Font(family="Arial", size=15)
         custom_font3 = tkFont.Font(family="Arial", size=10)
 
+        super().__init__(root)
+
         # creating widgets
-        self.header = tk.Label(self.frame, text="Creating 2D CA", font=custom_font, justify="center", background="#8D8A8A")
+        self.header = tk.Label(self.frame, text="Creating Grid CA", font=custom_font, justify="center", background="#8D8A8A")
         self.go_back_button = tk.Button(self.frame, text="back", border=5,background="#2DE840", activebackground="#178122", 
                                             fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
                                             command= lambda: execute(ScreenList.MainMenu, None))
 
-        self.side_slider_label = tk.Label(self.frame, text="Side length", font=custom_font2, justify="center", background="#8D8A8A")
-        self.side_size_slider = tk.Scale(self.frame, from_ = 3, to = 21, orient="horizontal", background="#2DE840", activebackground="#0C0D0C", 
+        self.slider_label = tk.Label(self.frame, text="Amount of cells", font=custom_font2, justify="center", background="#8D8A8A")
+        self.size_slider = tk.Scale(self.frame, from_ = 3, to = 21, orient="horizontal", background="#2DE840", activebackground="#0C0D0C", 
                                             fg="#202020", font=custom_font2, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
 
         self.ruleset_label = tk.Label(self.frame, text="Enter ruleset", font=custom_font2, justify="center", background="#8D8A8A")
         self.ruleset = tk.StringVar(self.frame)
         self.ruleset_entry = tk.Entry(self.frame, textvariable=self.ruleset, border=5,background="#2DE840", 
                                             fg="#202020", font=custom_font2)
-        self.invalid_ruleset_warning = tk.Label(self.frame, fg="#880000", text="Ruleset must consist of 512 characters", font=custom_font3, justify="center", background="#8D8A8A")
+        self.invalid_ruleset_warning = tk.Label(self.frame, fg="#880000", text="Ruleset does not contain the correct amount of characters", font=custom_font3, justify="center", background="#8D8A8A")
 
         self.boundry_condition_choice_label = tk.Label(self.frame, text="Choose boundry conditions", font=custom_font2, justify="center", background="#8D8A8A")
         self.boundry_condition_choice = tk.StringVar(self.frame, value=BoundryConditions.Dirichlet0.name)
@@ -77,17 +93,19 @@ class CA2D_PrepScreen(Screen):
 
     def run(self, args) -> None:
         """
-        For this screen, 'args' is optional. The parameter *can* be read to set default values (type must be CA2D_SimOptions). This behaviour is mainly used when returning to this screen from the simulation screen. The presets of the CA that was being simulated are copied.
+        For this screen, 'args' is optional. The parameter *can* be read to set default values (type must be GridCA_SimOptions). This behaviour is mainly used when returning to this screen from the simulation screen. The presets of the CA that was being simulated are copied.
         """
-        self.frame.place(x = 0, y = 0)
+        super().run(args)
         self.parse_args(args)
         self.place_widgets()
         self.configure_input_warnings()
+
 
     def cleanup(self) -> None:
         """
         Un-links automatic input checks from the inputvariables that they were associated with (if any). Removes warnings (if any).
         """
+
         # forget callbacks
         try: self.ca_name.trace_remove("write", self.ca_name_validation_callback_id)
         except (ValueError, tk.TclError): pass
@@ -97,58 +115,6 @@ class CA2D_PrepScreen(Screen):
         self.invalid_name_warning.place_forget()
         self.invalid_ruleset_warning.place_forget()
         super().cleanup()
-        
-    def parse_args(self, args) -> None:
-        """
-        This method determines what presets should be used for input widgets (e.g. the size slider). If the 'args' parameter is of type CA2D_SimOptions, then it will determine what presets to use (e.g. set size slider to 15). Default values are used otherwise (e.g. size slider defaults to 9).
-        """
-        if isinstance(args, CA2D_SimOptions): # use presets that were passed through args 
-            size_preset = args.size
-            ruleset_preset = args.ruleset
-            boundry_conditions_preset = args.boundry_conditions
-            name_preset = args.name
-            alive_cell_color_preset = args.alive_cell_color
-            dead_cell_color_preset = args.dead_cell_color
-        else: # no presets passed -> use default
-            size_preset = "9"
-            ruleset_preset = "00000000000000000000000000000000000000000000000100000000000000010000000000000001000000000000000100000001000101110000000100010110000000000000000100000000000000010000000100010111000000010001011000000001000101110000000100010110000101110111111000010110011010000000000000000001000000000000000100000001000101110000000100010110000000010001011100000001000101100001011101111110000101100110100000000001000101110000000100010110000101110111111000010110011010000001011101111110000101100110100001111110111010000110100010000000" # Conway's Game of Life
-            boundry_conditions_preset = BoundryConditions.Dirichlet0
-            name_preset = "New"  
-            alive_cell_color_preset = "#000000"
-            dead_cell_color_preset = "#FFFFFF"
-    
-        self.side_size_slider.set(size_preset)
-        self.ruleset.set(ruleset_preset)
-        self.ca_name.set(name_preset)
-        self.boundry_condition_choice.set(boundry_conditions_preset.name)
-        self.alive_cell_color_button.config(bg=alive_cell_color_preset)
-        self.dead_cell_color_button.config(bg=dead_cell_color_preset)
-
-    def place_widgets(self) -> None:
-        """
-        Puts most widgets on the screen. Input warnings are excluded.
-        """
-                
-        self.header.place(relx=0.5, rely=0.1, anchor="center")
-        self.go_back_button.place(relx=0.01, rely=0.01)
-
-        self.side_slider_label.place(relx=0.1, rely=0.2)
-        self.side_size_slider.place(relx=0.1, rely=0.27)
-
-        self.ruleset_label.place(relx=0.5, rely=0.2)
-        self.ruleset_entry.place(relx=0.5, rely=0.3, relwidth=0.2)
-
-        self.boundry_condition_choice_label.place(relx=0.25, rely=0.2)
-        self.boundry_conditions_dropdown.place(relx=0.25, rely=0.28)
-
-        self.ca_name_label.place(relx=0.7, rely=0.2)
-        self.ca_name_entry.place(relx=0.7, rely=0.3, relwidth=0.2)
-
-        self.alive_cell_color_label.place(relx=0.3, rely=0.55)
-        self.alive_cell_color_button.place(relx=0.3, rely=0.65, relwidth=0.2)
-        self.dead_cell_color_label.place(relx=0.5, rely=0.55)
-        self.dead_cell_color_button.place(relx=0.5, rely=0.65, relwidth=0.2)
-        self.create_button.place(relx=0.5, rely=0.85, anchor="center")
 
     def configure_input_warnings(self) -> None:
         """
@@ -157,35 +123,6 @@ class CA2D_PrepScreen(Screen):
         self.ca_name_validation_callback_id = self.ca_name.trace_add("write", callback= lambda *args: self.validate_name())
         self.ruleset_validation_callback_id = self.ruleset.trace_add("write", callback= lambda *args: self.validate_ruleset())
 
-    # input validations
-    def validate_name(self) -> bool:
-        """
-        If the name that the user has input so far is non-empty and contains at most MAX_NAME_LENGTH characters, the input warning (if present) is removed and True is returned; otherwise, the input warning is placed and False is returned.
-        """
-        if len(self.ca_name.get()) == 0 or len(self.ca_name.get()) > 15:
-            self.invalid_name_warning.place(relx=0.5, rely=0.45)
-            return False
-        else:
-            self.invalid_name_warning.place_forget()
-            return True
-        
-    def validate_ruleset(self) -> bool:
-        """
-        If the ruleset that the user has input so far consists of 512 characters and contains only 1's and 0's, the input warning (if present) is removed and True is returned; otherwise, the input warning is placed (with the relevant message) and False is returned.
-        """
-        ruleset_value = self.ruleset.get()
-        if len(ruleset_value) != 512:
-            self.invalid_ruleset_warning.config(text="Ruleset must consist of 512 characters")
-            self.invalid_ruleset_warning.place(relx=0.5, rely=0.4)
-            return False
-        elif not all(char in ["0", "1"] for char in ruleset_value):
-            self.invalid_ruleset_warning.config(text="Ruleset must consist of only 1's & 0's")
-            self.invalid_ruleset_warning.place(relx=0.5, rely=0.4)
-            return False
-        else:
-            self.invalid_ruleset_warning.place_forget()
-            return True
-    
     # buttons
     def on_choose_alive_cell_color(self) -> None:
         """
@@ -209,11 +146,47 @@ class CA2D_PrepScreen(Screen):
         """
         if not (self.validate_name() and self.validate_ruleset()):
             return
-        size = int(self.side_size_slider.get())
+        size = int(self.size_slider.get())
         ruleset_value = self.ruleset.get()
         boundry_conditions = BoundryConditions[self.boundry_condition_choice.get()] # convert option name to enum
         ca_name_value = self.ca_name.get()
         alive_cell_color = self.alive_cell_color_button["background"]
         dead_cell_color = self.dead_cell_color_button["background"]
-        sim_options = CA2D_SimOptions(size, ruleset_value, boundry_conditions, ca_name_value, alive_cell_color, dead_cell_color)
-        execute(ScreenList.CA2D_Simulation, sim_options)
+        sim_options = GridCA_SimOptions(size, ruleset_value, boundry_conditions, ca_name_value, alive_cell_color, dead_cell_color)
+        execute(self.SIM_SCREEN, sim_options)
+
+    @property
+    @abstractmethod
+    def SIM_SCREEN(self) -> ScreenList:
+        """
+        Allows each specific preparation screen to define its corresponding simulation screen
+        """
+        pass
+    
+    @abstractmethod
+    def parse_args(self, args) -> None:
+        """
+        This method determines what presets should be used for input widgets (e.g. the size slider). If the 'args' parameter is of type GridCA_SimOptions, then it will determine what presets to use (e.g. set size slider to 15). Default values are used otherwise (e.g. size slider defaults to 9).
+        """
+        pass
+
+    @abstractmethod
+    def place_widgets(self) -> None:
+        """
+        Each child class can decide how to design its screen
+        """
+        pass
+
+    @abstractmethod
+    def validate_name(self) -> bool:
+        """
+        Each child class should decide when names are valid and what should happen if they are not
+        """
+        pass
+
+    @abstractmethod
+    def validate_ruleset(self) -> bool:
+        """
+        Each child class should decide when rulesets are valid and what should happen if they are not
+        """
+        pass

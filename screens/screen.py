@@ -18,7 +18,7 @@ class Screen(ABC):
         All specific screen functionality goes here (creating and placing widgets, setting up triggers, etc.).
         Additional information can be passed through 'args'. Some screens might need this information to run (e.g. what CA are we drawing?). We intentionally omitted type annotations for the 'args' parameter, so that each Screen can decide what type of input is needed / allowed.
         """
-        pass
+        self.frame.place(x = 0, y = 0)
 
     def cleanup(self) -> None:
         """
