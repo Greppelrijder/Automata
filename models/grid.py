@@ -50,6 +50,15 @@ class Grid(ABC):
         :param boundry_conditions: Determines what should happen when a cell's alleged neighbour does not exists
         :type boundry_conditions: BoundryConditions
 
+        """
+                
+        self.amount_of_cells: int = cells
+        self.amount_of_states: int = states
+        self.amount_of_neighbours: int = neighbours
+        self.ruleset: str = rules
+        self.boundry_conditions: BoundryConditions = boundry_conditions
+
+        """
         Errors:
         * ValueError: this error will be raised if any of the given input is invalid (e.g. a negative amount of states)
         """
@@ -64,13 +73,6 @@ class Grid(ABC):
             raise ValueError(f"Parameter 'cells' must be at least 1 (got {neighbours})")
         self.validate_ruleset()
         
-        
-        self.amount_of_cells: int = cells
-        self.amount_of_states: int = states
-        self.amount_of_neighbours: int = neighbours
-        self.ruleset: str = rules
-        self.boundry_conditions: BoundryConditions = boundry_conditions
-
 
     def validate_ruleset(self) -> None:
         """
