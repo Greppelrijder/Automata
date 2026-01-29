@@ -2,20 +2,30 @@ import math
 from copy import deepcopy
 from .boundry_conditions import BoundryConditions
 from .cell import Cell
-from .grid import Grid, InvalidStateError, CANotInitializedError
+from .grid import Grid, InvalidStateError
 
 class CA_2D(Grid):
     """
     A 2-dimensional CA consists of an equal amount of rows and columns. Each cell is connected to (itself and) the eight cells surrounding it (4 orthogonal directions, 4 diagonal directions). Each cell can be in one of two states: alive (1) or dead (0).
     """
-        
-    neighbour_directions: list[tuple[int, int]] = [
+
+    # This order is used when retrieving a cell's neighbourhood code, i.e. we read from left to right an from top to bottom  
+    neighbour_directions_reading_order: list[tuple[int, int]] = [
         (-1, -1), (-1, 0), (-1, 1),
         (0, -1), (0, 0), (0, 1),
         (1, -1), (1, 0), (1, 1)
     ]
 
+    # If less than 8 neighbours are required, this list determines in which direction neighbours are chosen first.
+    # e.g. in the 3 neighbour case, the neighbours of a particular cell are: to the right, to the left and directly below said cell
+    # note that the cell itself is always in its own neighbourhood (corresponding with the direction (0,0))
+    # note that the reading order is still decisive, but some direction may be skipped over if they are not considered neighbour-directions anymore (in the 3-neighbour example above, 'reading' order would be (0, -1), (0, 1), (1, 0)) 
+    neighbour_selection_order: list[tuple[int, int]] = [
+        (0,0), (0, 1), (0, -1), (1, 0), (-1, 0), (-1, 1,), (1, 1), (1, -1), (-1, -1)
+    ]
+
     
+    # This method is used for Neumann boundry conditions
     @staticmethod
     def fit_in_range(value: int, lower_bound: int, upper_bound: int) -> int:
         """
@@ -25,17 +35,23 @@ class CA_2D(Grid):
         """
         return max(min(upper_bound - 1, value), lower_bound)
     
-    def __init__(self, cells: int, rules: str, boundry_conditions: BoundryConditions):
-        super().__init__(cells, states=2, neighbours = 8, rules=rules, boundry_conditions=boundry_conditions)
+    def __init__(self, cells: int, rules: str, boundry_conditions: BoundryConditions, neighbours: int = 8):
+        super().__init__(cells, states=2, neighbours=neighbours, rules=rules, boundry_conditions=boundry_conditions)
 
         """
-        Create a Grid with 2 states and 8 neighbours per cell.
+        Create a Grid with 2 states and up to 8 neighbours per cell.
         See Grid.__init__ for details on the parameters and potential errors.
 
-        Note that 'cells' will be rounded up to the nearest perfect square so that this CA has an equal amount of rows and columns
-        Neighbours are being assigned immediately, so that they need not be recalculated later
+        Note that 'cells' will be rounded up to the nearest perfect square so that this CA has an equal amount of rows and columns.
+        Neighbours are being assigned immediately, so that they need not be recalculated later.
+
         """
 
+        if neighbours > 8:
+            raise ValueError("Cannot initialise a 2D CA with more than 8 neighbours")
+        # the cell itself is also considerd its own neighbour, so we'll end up with one more neighbour than the specified amount
+        self.neighbour_directions = self.neighbour_selection_order[0: (neighbours+1)] 
+        
         # the grid will contain *at least* as many cells as specified
         # if necessary, we will add more cells to reach a perfect square
         self.side_length: int = math.ceil(math.sqrt(cells))
@@ -54,7 +70,9 @@ class CA_2D(Grid):
         """
         Find and connect all neighbours for the cell in the given position
         """
-        for dir in self.neighbour_directions:
+        for dir in self.neighbour_directions_reading_order:
+            if dir not in self.neighbour_directions: continue # not an actual neighbour in this case
+            
             neighbour: Cell = self.apply_boundry_rules(row_number + dir[0], column_number + dir[1])
             cell.add_to_neighbourhood(neighbour)
 

@@ -178,7 +178,7 @@ class GridCA_SimScreen(Screen, ABC):
         
         
         self.go_back_button.config(font=custom_font1, border=5, background="#2DE840", activebackground="#178122", fg="#202020", activeforeground="#202020", anchor="center",
-                                    command= lambda: execute(ScreenList.CA1D_Preparation, GridCA_SimOptions(
+                                    command= lambda: execute(self.PREP_SCREEN, GridCA_SimOptions(
             self.grid_size,
             self.ruleset,
             self.boundry_conditions,
@@ -202,6 +202,14 @@ class GridCA_SimScreen(Screen, ABC):
                                             fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
         self.reset_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
                                             fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
+    
+    @property
+    @abstractmethod
+    def PREP_SCREEN(self) -> ScreenList:
+        """
+        Allows each specific simulation screen to define its corresponding preparation screen
+        """
+        pass
 
     @abstractmethod
     def setup_ca(self) -> None:

@@ -1,6 +1,7 @@
 import sys
 import tkinter as tk
 from .grid_ca_sim_screen import GridCA_SimScreen
+from .screen_list import ScreenList
 
 sys.path.append("..")
 from models.ca_1d import CA_1D
@@ -9,6 +10,10 @@ from models.ca_1d import CA_1D
 class CA1D_SimScreen(GridCA_SimScreen):
 
 
+    @property
+    def PREP_SCREEN(self) -> ScreenList:
+        return ScreenList.CA1D_Preparation
+    
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
 
