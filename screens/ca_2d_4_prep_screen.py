@@ -23,7 +23,7 @@ class CA2D_4_PrepScreen(Screen):
         custom_font3 = tkFont.Font(family="Arial", size=10)
 
         # creating widgets
-        self.header = tk.Label(self.frame, text="Creating 2D CA with 4 neigbours", font=custom_font, justify="center", background="#8D8A8A")
+        self.header = tk.Label(self.frame, text="Creating 2D CA with 4 neighbours", font=custom_font, justify="center", background="#8D8A8A")
         self.go_back_button = tk.Button(self.frame, text="back", border=5,background="#2DE840", activebackground="#178122", 
                                             fg="#202020", activeforeground="#202020", font=custom_font, anchor="center",
                                             command= lambda: execute(ScreenList.MainMenu, None))
