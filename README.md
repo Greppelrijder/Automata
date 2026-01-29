@@ -36,8 +36,8 @@ To run the program, run the visualisation.py document. This will open a new wind
           001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 \
           000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 \ \
-  The scale is preset to have a maximum length of 21. This is to keep the overview of the grid nice. Or in other words, to prevent the cells from becoming to small. You can change the maximum size of the grid, by enlarging the scale maximum. For \
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 \
+  The scale is preset to have a maximum length of 21. This is to keep the overview of the grid nice. Or in other words, to prevent the cells from becoming to small. You can change the maximum size of the grid, by enlarging the scale maximum. you can change the maximum of the scale in the grid_ca_prep_screen.py file in line 48.\
   When you create a 2D CA with a relativly large side size, the FPS of the visualisation drops quite a bit. The advice is to keep the side size lower than 21. 
 
 # Useful
