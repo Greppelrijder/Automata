@@ -53,7 +53,7 @@ class CA2D_PrepScreen(GridCA_PrepScreen):
         self.header.place(relx=0.5, rely=0.1, anchor="center")
         self.go_back_button.place(relx=0.01, rely=0.01)
 
-        self.size_slider.place(relx=0.1, rely=0.2)
+        self.slider_label.place(relx=0.1, rely=0.2)
         self.size_slider.place(relx=0.1, rely=0.27)
 
         self.ruleset_label.place(relx=0.5, rely=0.2)

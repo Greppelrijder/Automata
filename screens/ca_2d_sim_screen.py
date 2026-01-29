@@ -35,7 +35,7 @@ class CA2D_SimScreen(GridCA_SimScreen):
             self.ruleset_label.config(text="Rules: Conway's game of life")
         else:
             # we don't display the entire ruleset; it's too large
-            self.ruleset_label.config(text=f"Rules: {self.ruleset[0:5]}...{self.ruleset[-5:-1]}") 
+            self.ruleset_label.config(text=f"Rules: {self.ruleset[0:5]}...{self.ruleset[-5:]}") 
 
     def place_widgets(self) -> None:
         self.header.place(relx=0.5, rely=0.1, anchor="center")
@@ -51,7 +51,7 @@ class CA2D_SimScreen(GridCA_SimScreen):
         self.go_back_button.place(relx=0.01, rely=0.01)
 
     # commands
-    def on_ca_canvas_clicked(self, args) -> None: # : tk.Event[tk.Canvas]           HIER NOG NAAR KIJKEN
+    def on_ca_canvas_clicked(self, args: tk.Event) -> None:
         index_row: int = int(args.x // self.ca_cell_width) # which row was clicked
         index_column: int = int(args.y // self.ca_cell_width) # which column was clicked
         self.ca_starting_state[index_row][index_column] = 1 - self.ca_starting_state[index_row][index_column] # flip cell's state
