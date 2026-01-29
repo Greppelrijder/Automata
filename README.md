@@ -48,7 +48,3 @@ generating callular automa with the rueles from for example Conway's Game of Lif
 # Suggestions for 2D cellular automa
 - Ruleset Game of Life (standard); boundry conditions: periodic; grid size: 3x3; starting state: [[0,1,0],[0,1,0],[0,1,0]].
 - Ruleset: Game of Life; boundry conditions: periodic; grid size: doesn't matter; starting state: Make a this 3x3 figure somewhere on the grid [[0,1,0],[0,0,1],[1,1,1]] (Gospers glider)
-
-
-Why the project is useful
-How users can get started with the project
