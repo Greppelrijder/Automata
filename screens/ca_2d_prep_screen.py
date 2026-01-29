@@ -19,7 +19,7 @@ class CA2D_PrepScreen(GridCA_PrepScreen):
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
 
-        self.header.config(text="Creating 1D CA")
+        self.header.config(text="Creating 2D CA")
         self.invalid_ruleset_warning.config(text="Ruleset must consist of 512 characters")
         
     def parse_args(self, args) -> None:

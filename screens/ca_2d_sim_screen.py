@@ -12,7 +12,7 @@ class CA2D_SimScreen(GridCA_SimScreen):
     
     @property
     def PREP_SCREEN(self) -> ScreenList:
-        return ScreenList.CA2D_Simulation
+        return ScreenList.CA2D_Preparation
 
     def __init__(self, root: tk.Tk) -> None:
         super().__init__(root)
