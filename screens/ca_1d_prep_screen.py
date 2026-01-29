@@ -10,7 +10,10 @@ from models.boundry_conditions import BoundryConditions
 
 
 class CA1D_PrepScreen(GridCA_PrepScreen):
-
+    """
+    For this preparation screen the CA's amount of neighbours is eight.
+    Other functionality is described inside the base class
+    """
     @property
     def SIM_SCREEN(self) -> ScreenList:
         return ScreenList.CA1D_Simulation
@@ -21,9 +24,6 @@ class CA1D_PrepScreen(GridCA_PrepScreen):
         self.invalid_ruleset_warning.config(text="Ruleset must consist of eight characters")
 
     def parse_args(self, args) -> None:
-        """
-        This method determines what presets should be used for input widgets (e.g. the size slider). If the 'args' parameter is of type CA1D_SimOptions, then it will determine what presets to use (e.g. set size slider to 15). Default values are used otherwise (e.g. size slider defaults to 9).
-        """
         if isinstance(args, GridCA_SimOptions): # use presets that were passed through args
             size_preset = args.size
             ruleset_preset = args.ruleset

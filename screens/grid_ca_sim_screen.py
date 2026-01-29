@@ -1,9 +1,12 @@
 import tkinter as tk
+import tkinter.font as tkFont
 from typing import Any
 from abc import ABC, abstractmethod
 
 from .screen import Screen
-from .grid_ca_prep_screen import GridCA_SimOptions
+from .screen_manager import execute
+from .screen_list import ScreenList
+from .grid_ca_sim_options import GridCA_SimOptions
 
 
 class GridCA_SimScreen(Screen, ABC):
@@ -161,19 +164,53 @@ class GridCA_SimScreen(Screen, ABC):
         self.alive_cell_color = args.alive_cell_color
         self.dead_cell_color = args.dead_cell_color
 
-    @abstractmethod
-    def setup_ca(self) -> None:
-        """
-        Each simulation screen constructs its own CA here, self.ca must be set during that process
-        """
-        self.ca: Any
-        pass
-
-    @abstractmethod
     def configure_widgets(self) -> None:
         """
         Ensuring the right widgets are enabled & displaying correctly
         """
+        custom_font1 = tkFont.Font(family="Arial", size=25)
+        custom_font2 = tkFont.Font(family="Arial", size=15)
+
+        self.header.config(text=f"Simulating Grid CA '{self.ca_name}'", font=custom_font1, background="#8D8A8A")
+        self.size_label.config(text=f"Size: {self.grid_size}", font=custom_font2, background="#8D8A8A")
+        self.ruleset_label.config(text=f"Rules: {self.ruleset} (Rule: {int(self.ruleset,2)})", font=custom_font2, background="#8D8A8A")
+        self.boundry_conditions_label.config(text=f"Boundry conditions: {self.boundry_conditions.name}", font=custom_font2, background="#8D8A8A")
+        
+        
+        self.go_back_button.config(font=custom_font1, border=5, background="#2DE840", activebackground="#178122", fg="#202020", activeforeground="#202020", anchor="center",
+                                    command= lambda: execute(ScreenList.CA1D_Preparation, GridCA_SimOptions(
+            self.grid_size,
+            self.ruleset,
+            self.boundry_conditions,
+            self.ca_name,
+            self.alive_cell_color,
+            self.dead_cell_color
+        )))
+        self.auto_evolve_button_text.set("auto")
+        self.auto_evolve_interval_slider.set(1000)
+
+        self.next_state_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.prev_state_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.auto_evolve_button.config(state="disabled", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font2, anchor="center")
+        self.auto_evolve_interval_slider.config(state="disabled", background="#2DE840", activebackground="#0C0D0C", 
+                                            fg="#202020", font=custom_font2, troughcolor="#2DE840", highlightbackground="#8D8A8A", border=3)
+
+        self.confirm_starting_state_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
+        self.reset_button.config(state="normal", border=5,background="#2DE840", activebackground="#178122", 
+                                            fg="#202020", activeforeground="#202020", font=custom_font1, anchor="center")
+
+    @abstractmethod
+    def setup_ca(self) -> None:
+        """
+        Each simulation screen constructs its own CA here, self.ca must be set during that process. Important: this base method has partial implementation which must be called at the END of an implemented version. (super().setup_ca() must be at the END)
+        """
+        self.ca: Any
+        self.clear_canvas()
+        self.ca_canvas_click_callback_id = self.ca_canvas.bind("<Button-1>", self.on_ca_canvas_clicked)
         pass
 
     @abstractmethod
@@ -208,6 +245,6 @@ class GridCA_SimScreen(Screen, ABC):
     @abstractmethod
     def on_ca_canvas_clicked(self, args: tk.Event) -> None:
         """
-        This method should define what should happen when the canvas is clicked during initial state configuration
+        Calculates which cell was clicked, flips the state of that cell (dead <-> alive) and redraws it accordingly
         """
         pass
