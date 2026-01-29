@@ -32,7 +32,7 @@ class CA2D_4_SimScreen(GridCA_SimScreen):
         self.header.config(text=f"Simulating 2D CA with 4 neighbours '{self.ca_name}'")
 
         if self.ruleset == "00101010101010101010101010101010":
-            self.ruleset_label.config(text="Rules: Left")
+            self.ruleset_label.config(text="Rules: Move left")
         else:
             # we don't display the entire ruleset; it's too large
             self.ruleset_label.config(text=f"Rules: {self.ruleset[0:5]}...{self.ruleset[-5:]}") 
