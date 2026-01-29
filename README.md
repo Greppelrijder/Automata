@@ -38,7 +38,8 @@ To run the program, run the visualisation.py document. This will open a new wind
           000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 \
   The scale is preset to have a maximum length of 21. This is to keep the overview of the grid nice. Or in other words, to prevent the cells from becoming to small. You can change the maximum size of the grid, by enlarging the scale maximum. you can change the maximum of the scale in the grid_ca_prep_screen.py file in line 48.\
-  When you create a 2D CA with a relativly large side size, the FPS of the visualisation drops quite a bit. The advice is to keep the side size lower than 21. 
+  When you create a 2D CA with a relativly large side size, the FPS of the visualisation drops quite a bit. The advice is to keep the side size lower than 21.
+After you've created the CA and added a starting state (by pressing the white squares and pressing the confirm button), you can go to the next or previous state with their repective buttons. If there is no previous state, nothing wil happen. There is also a reset button that, when clicked once, puts the CA in the starting state, and when pressed again clears the entire grid and sets the state of all the cells to "0" / dead. The auto butten runs the CA automatic with an, on the scale to the right modifiable number of milliseconds in between each step.
 
 # Useful
 generating callular automa with the rueles from for example Conway's Game of Life shows that complex behavior can arise from very simple rules. It can be used to visualize or model complex problems.
