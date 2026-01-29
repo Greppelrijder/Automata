@@ -9,10 +9,10 @@ We made a visualization program, so the user can visualize a created grid, with 
 
 # Users guide
 To run the program, run the visualisation.py document. This will open a new window on your screen. After you've pressed the "Main menu" button, you can choose which CA you want to create.
-- If you chose for a 1D CA, you can choose the amount of cells, the boundry conditions*, you can create your own ruleset** and you can choose a name for the CA consisting of max. 15 characters. You can also choose a color for the cells when they are either dead or alive. The standard ruleset here is set to "Rule 30".
-- If you chose for a 2D CA, the boundry conditions, name and colors of the cells work the same. The difference is that you choose for the length of one side of the grid and the length of the ruleset is now 512. The standard ruleset here is set to the rules of Conway's Game of Life.
+- If you chose for a 1D CA, you can choose the amount of cells, the boundary conditions*, you can create your own ruleset** and you can choose a name for the CA consisting of max. 15 characters. You can also choose a colour for the cells when they are either dead or alive. The standard ruleset here is set to "Rule 30".
+- If you chose for a 2D CA, the boundary conditions, name and colors of the cells work the same. The difference is that you choose for the length of one side of the grid and the length of the ruleset is now 512. The standard ruleset here is set to the rules of Conway's Game of Life.
 - If you chose for a 2D CA with 4 neighbours, everything except the length of the ruleset is the same as a 2D CA. The required length of a ruleset in this case is 32.
-* You can choose the boundr conditions from the following list:
+* You can choose the boundary conditions from the following list:
   * Dirichlet0: A constant cell with state 0 is used (this cell is not part of the Grid)
   * Dirichlet1: A constant cell with state 1 is used (this cell is not part of the Grid)
   * Periodic: The Grid is 'wrapped around', so that the cell on the other side of the grid is used
