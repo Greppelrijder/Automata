@@ -111,7 +111,6 @@ class Grid(ABC):
         return "".join(str(cell.state) for cell in neighbourhood)
 
 
-
     def configure_initial_state(self, initial_state) -> None:
         """
         Set the state of each cell to the corresponding value in 'initial_state'
@@ -182,7 +181,7 @@ class Grid(ABC):
         """
         if (index is None) and (self.current_state_index is not None): # assume current state
             return self.history[self.current_state_index]
-        elif index is None: # not state to use
+        elif index is None: # no state to use
             raise CANotInitializedError(f"Cannot get this CA's state, because it has not yet been initialized")
 
         try: # from this point on, index is not None
@@ -199,14 +198,14 @@ class Grid(ABC):
         self.current_state_index = None
 
     @abstractmethod
-    def determine_next_state(self) -> object:
+    def determine_next_state(self) -> Any:
         """
         There is no uniform way to determine a CA's next state, since each child class might use a different datastructure to store its cells. Each childclass will therefore have to implement this functionality for its datastructure
         """
         pass
 
     @abstractmethod
-    def set_state(self, state) -> None:
+    def set_state(self, state: Any) -> None:
         """
         There is no uniform way to set a CA's state, since each child class might use a different datastructure to store its cells. Each childclass will therefore have to implement this functionality for its datastructure
         """
