@@ -5,7 +5,7 @@ def determine_ruleset(amount_of_neighbours: int, amount_of_alive_neighbours_to_l
     :param amount_of_neighbours: The amount of neighbours a cell has, this amount should be even and greater than 1
     :type amount_of_neighbours: int
     :param amount_of_alive_neighbours_to_live: The list inputted here contains all amount of neighbours, whereby a cell will be able to stay alive.
-    For any other amount of neighbours, it dies to either loneliness or overpopulation.
+    For any other amount of neighbours, the cell dies to either loneliness or overpopulation.
     :type amount_of_alive_neighbours_to_live: list[int]
     :param amount_to_come_alive: The list inputted here contains all amount of neighbours, whereby a dead cell will be able to come alive.
     :type amount_to_come_alive: list[int]
@@ -63,8 +63,8 @@ def validate_amount_of_neighbours_to_live(amount_of_neighbours, amount_of_neighb
     for i in amount_of_neighbours_to_live:
         if type(i) is not type(1):
             raise TypeError("All arguments in the inputted lists must be of type 'int'.")
-        if i <= 0 or i > amount_of_neighbours:
-            raise ValueError("All arguments in the inputted lists must be greater than 0 or smaller than the amount of neighbours a cell has.")
+        if i < 0 or i > amount_of_neighbours:
+            raise ValueError("All arguments in the inputted lists must be non-negative or smaller than or equal to the amount of neighbours a cell has.")
     pass
 
 # determine_ruleset(8,[2,3],[3]) returns the rules for Conway's Game of Life
