@@ -64,7 +64,7 @@ def validate_amount_of_neighbours_to_live(amount_of_neighbours, amount_of_neighb
         if type(i) is not type(1):
             raise TypeError("All arguments in the inputted lists must be of type 'int'.")
         if i < 0 or i > amount_of_neighbours:
-            raise ValueError("All arguments in the inputted lists must be non-negative or smaller than the amount of neighbours a cell has.")
+            raise ValueError("All arguments in the inputted lists must be non-negative or smaller than or equal to the amount of neighbours a cell has.")
     pass
 
 # determine_ruleset(8,[2,3],[3]) returns the rules for Conway's Game of Life
