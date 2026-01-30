@@ -76,7 +76,7 @@ class Grid(ABC):
         self.cells = []
         self.history: list = []
         self.current_state_index: int | None = None
-        
+
 
 
     def validate_ruleset(self) -> None:
@@ -96,7 +96,7 @@ class Grid(ABC):
         
         possible_states = range(0, self.amount_of_states)
         if any(int(char) not in possible_states for char in self.ruleset):
-            raise InvalidRulesetError(f"Incorrect new state, the only allowed new states are {[range(0,self.amount_of_states)]}.")
+            raise InvalidRulesetError(f"Invalid ruleset, the only allowed characters are in {[range(0,self.amount_of_states)]}.")
 
     def amount_of_neighbourhood_states(self) -> int:
         """

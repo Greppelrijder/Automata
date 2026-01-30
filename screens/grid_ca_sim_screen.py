@@ -67,6 +67,9 @@ class GridCA_SimScreen(Screen, ABC):
         except (ValueError, tk.TclError): pass
 
         self.ca_canvas.place_forget()
+        self.ca_canvas.delete("all")
+
+        self.frame
         super().cleanup()
 
     # buttons
