@@ -62,7 +62,7 @@ There are however a few restriction to the function:
 Caution: This rule set generator file does not contain a GUI, so the user should run the file itself and call the function. (Look at the example in the last line.)
 
 # Useful
-generating callular automa with the rueles from for example Conway's Game of Life shows that complex behavior can arise from very simple rules. It can be used to visualize or model complex problems.
+generating callular automa with the rules from for example Conway's Game of Life shows that complex behavior can arise from very simple rules. It can be used to visualize or model complex problems.
 
 # Suggestions for 1D cellular automa
 - Ruleset: 00011100; boundry conditions: doesn't matter; starting state: cell 2,5,8,... alive.
