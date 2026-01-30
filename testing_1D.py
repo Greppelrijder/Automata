@@ -1,6 +1,10 @@
 from models.ca_1d import CA_1D
 from models.boundry_conditions import BoundryConditions
 
+"""
+This document can be used to test our code for 1D cellular automa, although it is easer to test the code in the visualisation.
+"""
+
 def run(initial_state: list[int], steps: int, ruleset: str, boundry_conditions: BoundryConditions):
     ca: CA_1D = CA_1D(len(initial_state), ruleset, boundry_conditions)
     ca.configure_initial_state(initial_state)
@@ -19,6 +23,7 @@ def run(initial_state: list[int], steps: int, ruleset: str, boundry_conditions: 
 
 if __name__ == "__main__":
     #run([0,0,0,0,1,0,0,0,0], 100, "00011110", BoundryConditions.Dirichlet0) # works as expected (stopped at step 15)
-    run([0,0,0,0,1,0,0,0,0], 100, "00011110", BoundryConditions.Dirichlet1) # works as expected (stopped at step 21)
+    #run([0,0,0,0,1,0,0,0,0], 100, "00011110", BoundryConditions.Dirichlet1) # works as expected (stopped at step 21)
     #run([0,0,0,0,1,0,0,0,0], 100, "00011110", BoundryConditions.Neumann) # works as expected (didn't stop)
     #run([0,0,0,0,1,0,0,0,0], 100, "00011110", BoundryConditions.Periodic) # works as expected (didn't stop)
+    pass
