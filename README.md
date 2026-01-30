@@ -46,6 +46,17 @@ The scale is preset to have a maximum length of 21. This is to keep the overview
  When you create a 2D CA with a relativly large side size, the FPS of the visualisation drops quite a bit. The advice is to keep the side size lower than 21.
 After you've created the CA and added a starting state (by pressing the white squares and pressing the confirm button), you can go to the next or previous state with their repective buttons. If there is no previous state, nothing wil happen. There is also a reset button that, when clicked once, puts the CA in the starting state, and when pressed again clears the entire grid and sets the state of all the cells to "0" / dead. The auto butten runs the CA automatic with an, on the scale to the right modifiable number of milliseconds in between each step.
 
+# Generate your own rule set
+In the master branch we also included a file called Create_rule_set. This file contains a function called determine_ruleset which can generate a rule set on the following inputs:
+- You can enter the amount of neighbours a cell has. (We fixed the amount of states to 2)
+- The second parameter wants a list with the amount of neighbours, whereby a cell will be able to stay alive.
+- The third parameter wants a list with the amount of neighbours, whereby a dead cell will be able to come alive. 
+
+There are however a few restriction to the function:
+- The amount of neighbours must be even and greater than 1. In the 1D and 2D CA, the amount of neighbours is always even.
+- The list, with the required number of alive neighbours to stay alive, may only contain integers non-negative and smaller than or equal to the amount of neighbours the cell has.
+- The list, with the required number of alive neighbours to come alive, may only contain integers non-negative and smaller than or equal to the amount of neighbours the cell has.
+
 # Useful
 generating callular automa with the rueles from for example Conway's Game of Life shows that complex behavior can arise from very simple rules. It can be used to visualize or model complex problems.
 
